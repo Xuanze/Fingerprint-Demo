@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="#ff303030"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10.0dip"
+            android:text="请验证管理员密码"
+            android:textColor="@color/white"
+            android:textSize="24dp" />
+
+        <com.zhongruan.android.fingerprint_demo.view.MyJiugonggeView
+            android:id="@id/jiuggongge_view"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_centerInParent="true"
+            android:background="@color/white"
+            android:clickable="true" />
+    </LinearLayout>
+</RelativeLayout>

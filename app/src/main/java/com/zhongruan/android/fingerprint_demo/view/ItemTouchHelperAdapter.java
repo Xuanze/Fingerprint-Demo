@@ -1,0 +1,7 @@
+package com.zhongruan.android.fingerprint_demo.view;
+
+public interface ItemTouchHelperAdapter {
+    void onItemDismiss(int i);
+
+    boolean onItemMove(int i, int i2);
+}
