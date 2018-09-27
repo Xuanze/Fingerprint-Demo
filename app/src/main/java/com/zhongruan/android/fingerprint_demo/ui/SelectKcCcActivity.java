@@ -54,7 +54,6 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
     private List<Ks_cc> ccList;
     private ImageView mIvSelectall;
     private LinearLayout mLvSelectall;
-    private List<Bk_ks> ksList;
 
     @Override
     public void setContentView() {
