@@ -22,7 +22,6 @@ import com.zhongruan.android.fingerprint_demo.db.Ks_ccDao;
 import com.zhongruan.android.fingerprint_demo.db.Ks_kcDao;
 import com.zhongruan.android.fingerprint_demo.db.Kstz_zwDao;
 import com.zhongruan.android.fingerprint_demo.db.Rz_ks_zwDao;
-import com.zhongruan.android.fingerprint_demo.db.entity.Bk_ks;
 import com.zhongruan.android.fingerprint_demo.db.entity.Ks_cc;
 import com.zhongruan.android.fingerprint_demo.db.entity.Ks_kc;
 import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
