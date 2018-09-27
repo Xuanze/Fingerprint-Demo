@@ -11,6 +11,7 @@ import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
 import com.zhongruan.android.fingerprint_demo.db.DbServices;
 import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
+import com.zhongruan.android.fingerprint_demo.utils.ABLSynCallback;
 import com.zhongruan.android.fingerprint_demo.utils.LogUtil;
 import com.zhongruan.android.fingerprint_demo.utils.Utils;
 
@@ -198,9 +199,28 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                         if (confirm) {
                             dialog.dismiss();
                             showProgressDialog(SettingActivity.this, "正在清空数据...", false);
-                            if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
-                                dismissProgressDialog();
-                            }
+                            ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                                @Override
+                                public Object callback() {
+                                    if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
+                                        try {
+                                            Thread.sleep(2000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                        return true;
+                                    } else {
+                                        return false;
+                                    }
+                                }
+                            }, new ABLSynCallback.ForegroundCall() {
+                                @Override
+                                public void callback(Object obj) {
+                                    if (((Boolean) obj).booleanValue()){
+                                        dismissProgressDialog();
+                                    }
+                                }
+                            });
                         } else {
                             dialog.dismiss();
                         }
