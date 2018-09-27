@@ -50,7 +50,6 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
     private List<Ks_kc> ksKcList;
     private Button mLlButtons;
     private Ks_cc cc;
-    private Ks_kc kc;
     private List<Ks_kc> mXZksKcList;
     private List<Ks_cc> ccList;
     private ImageView mIvSelectall;
