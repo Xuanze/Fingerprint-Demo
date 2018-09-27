@@ -230,7 +230,7 @@ public class FileUtils {
         }
     }
 
-    public static boolean copyFile(String oldPath, String newPath) {
+    private static boolean copyFile(String oldPath, String newPath) {
         LogUtil.i("copyFile:oldPath", oldPath);
         LogUtil.i("copyFile:newPath", newPath);
         boolean flag = false;
@@ -341,7 +341,7 @@ public class FileUtils {
     }
 
     // 生成文件
-    public static File makeFilePath(String filePath, String fileName) {
+    private static File makeFilePath(String filePath, String fileName) {
         File file = null;
         makeRootDirectory(filePath);
         try {
@@ -356,7 +356,7 @@ public class FileUtils {
     }
 
     // 生成文件夹
-    public static void makeRootDirectory(String filePath) {
+    private static void makeRootDirectory(String filePath) {
         File file = null;
         try {
             file = new File(filePath);
@@ -387,7 +387,7 @@ public class FileUtils {
      *
      * @param dir 将要删除的文件目录
      */
-    public static boolean deleteDir(File dir) {
+    private static boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             //递归删除目录中的子目录下
@@ -421,7 +421,7 @@ public class FileUtils {
         return flag;
     }
 
-    public static boolean delPathFile(String path, boolean allFolder) {
+    private static boolean delPathFile(String path, boolean allFolder) {
         File file = new File(path);
         if (!file.exists() || !file.isDirectory()) {
             return false;

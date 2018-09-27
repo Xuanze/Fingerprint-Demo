@@ -13,7 +13,7 @@ import cn.com.aratek.idcard.IDCardReader;
 import cn.com.aratek.util.Result;
 
 public class CommonUtil {
-    public static final int SPLIT_INTEGER = 512;
+    private static final int SPLIT_INTEGER = 512;
     private static final String TAG = "ABLCommonUtil";
 
     public static IDCardData getIDCardData(IDCard card) {

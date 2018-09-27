@@ -18,20 +18,15 @@ import rx.android.BuildConfig;
 public class Utils {
     public static final String DEVICETYPE_YLT1 = "BM7502";
     public static final String DEVICETYPE_YLT2 = "BM7510";
-    public static final int LEFT_FINGER_FIRST = 3;
-    public static final int LEFT_FINGER_FOURTH = 1;
-    public static final int LEFT_FINGER_LITTLE = 0;
-    public static final int LEFT_FINGER_MIDDLE = 2;
-    public static final int LEFT_FINGER_THUMB = 4;
-    final List<String> list;
+    private static final int LEFT_FINGER_FIRST = 3;
+    private static final int LEFT_FINGER_FOURTH = 1;
+    private static final int LEFT_FINGER_LITTLE = 0;
+    private static final int LEFT_FINGER_MIDDLE = 2;
+    private static final int LEFT_FINGER_THUMB = 4;
     private static final int MIN_DELAY_TIME = 1000;  // 两次点击间隔不能少于1000ms
     private static long lastClickTime;
     private static DecimalFormat fileIntegerFormat = new DecimalFormat("#0");
     private static DecimalFormat fileDecimalFormat = new DecimalFormat("#0.##");
-
-    public Utils(List<String> list) {
-        this.list = list;
-    }
 
     public static String getUSBPath() {
         String str = Build.MODEL;
@@ -199,11 +194,11 @@ public class Utils {
     }
 
     public static long getAvailableExternalMemorySize() {
-        if (externalMemoryAvailable()) {
-            StatFs localStatFs = new StatFs(Environment.getExternalStorageDirectory().getPath());
-            return localStatFs.getBlockSize() * localStatFs.getAvailableBlocks();
+        if (!externalMemoryAvailable()) {
+            return -1;
         }
-        return -1L;
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        return ((long) stat.getAvailableBlocks()) * ((long) stat.getBlockSize());
     }
 
     public static boolean externalMemoryAvailable() {
@@ -227,7 +222,6 @@ public class Utils {
         StatFs localStatFs = new StatFs(Environment.getDataDirectory().getPath());
         return localStatFs.getBlockSize() * localStatFs.getBlockCount();
     }
-
 
     public static boolean stringIsEmpty(String string) {
         if (string == null || string.trim().equals(BuildConfig.VERSION_NAME) || string.trim().toLowerCase().equals("null") || string.trim().toLowerCase().equals("<null>")) {

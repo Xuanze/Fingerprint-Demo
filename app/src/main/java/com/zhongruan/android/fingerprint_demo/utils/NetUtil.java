@@ -15,11 +15,11 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 import static android.content.Context.WIFI_SERVICE;
 
 public class NetUtil {
-    public static final int NET_TYPE_DEFAULT = 0;
-    public static final int NET_TYPE_ETHERNET = 3;
-    public static final int NET_TYPE_GPRS = 2;
-    public static final int NET_TYPE_NONE = -1;
-    public static final int NET_TYPE_WIFI = 1;
+    private static final int NET_TYPE_DEFAULT = 0;
+    private static final int NET_TYPE_ETHERNET = 3;
+    private static final int NET_TYPE_GPRS = 2;
+    private static final int NET_TYPE_NONE = -1;
+    private static final int NET_TYPE_WIFI = 1;
 
     public static int getNetType(Context context) {
         NetworkInfo info = ((ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo();

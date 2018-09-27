@@ -9,7 +9,6 @@ public class PreferenceUtils {
     private static PreferenceUtils INSTANCE = null;
     private static final String TAG = "ABLPreferenceUtils";
     private static Context mContext;
-
     static {
         INSTANCE = null;
     }
