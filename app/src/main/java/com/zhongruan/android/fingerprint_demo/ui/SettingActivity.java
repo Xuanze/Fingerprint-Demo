@@ -1,6 +1,7 @@
 package com.zhongruan.android.fingerprint_demo.ui;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -9,6 +10,11 @@ import android.widget.TextView;
 import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
 import com.zhongruan.android.fingerprint_demo.db.DbServices;
+import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
+import com.zhongruan.android.fingerprint_demo.utils.LogUtil;
+import com.zhongruan.android.fingerprint_demo.utils.Utils;
+
+import static com.zhongruan.android.fingerprint_demo.utils.FileUtils.delFolder;
 
 /**
  * 基础设置
@@ -28,6 +34,12 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private LinearLayout mLlFingerCfcs;
     private TextView mTvFingerBdfw;
     private LinearLayout mLlFingerBdfw;
+    private LinearLayout mLlSjql;
+    private TextView mTvStorage;
+    private TextView mTvStorageTip;
+    private TextView mTvStorageTip2;
+    private long size;
+    private long total;
 
     @Override
     public void setContentView() {
@@ -49,10 +61,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mLlFingerCfcs = findViewById(R.id.ll_finger_cfcs);
         mTvFingerBdfw = findViewById(R.id.tv_finger_bdfw);
         mLlFingerBdfw = findViewById(R.id.ll_finger_bdfw);
+        mLlSjql = findViewById(R.id.ll_sjql);
+        mTvStorage = findViewById(R.id.tv_storage);
+        mTvStorageTip = findViewById(R.id.tv_storage_tip);
+        mTvStorageTip2 = findViewById(R.id.tv_storage_tip2);
     }
 
     @Override
     public void initListeners() {
+        mLlSjql.setOnClickListener(this);
         mLlDataBack.setOnClickListener(this);
         mLlFingerFz.setOnClickListener(this);
         mLlMsChange.setOnClickListener(this);
@@ -63,6 +80,21 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void initData() {
+        if (Utils.externalMemoryAvailable()) {
+            size = Utils.getAvailableExternalMemorySize();
+            total = Utils.getTotalExternalMemorySize();
+            LogUtil.i("执行1:" + size + "   " + total);
+        } else {
+            LogUtil.i("执行2:" + size + "   " + total);
+            size = Utils.getAvailableInternalMemorySize();
+            total = Utils.getTotalInternalMemorySize();
+        }
+        mTvStorage.setText(Utils.formatFileSize(size) + " / " + Utils.formatFileSize(total));
+        if (size < 104857600) {
+            mTvStorageTip.setVisibility(View.VISIBLE);
+        } else {
+            mTvStorageTip.setVisibility(View.GONE);
+        }
         if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_ms()) == 0) {
             mTvMsChange.setText("采集模式");
         } else {
@@ -158,6 +190,22 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     }
                 });
                 builder.show();// 让弹出框显示
+                break;
+            case R.id.ll_sjql:
+                new HintDialog(this, R.style.dialog, "是否清空以前数据？", new HintDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        if (confirm) {
+                            dialog.dismiss();
+                            showProgressDialog(SettingActivity.this, "正在清空数据...", false);
+                            if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
+                                dismissProgressDialog();
+                            }
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("U盘导入数据").setPositiveButton("是").setNegativeButton("否").show();
                 break;
         }
     }

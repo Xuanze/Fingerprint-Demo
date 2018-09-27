@@ -1,12 +1,15 @@
 package com.zhongruan.android.fingerprint_demo.utils;
 
 import android.os.Build;
+import android.os.Environment;
+import android.os.StatFs;
 
 import com.zhongruan.android.fingerprint_demo.config.ABLConfig;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +26,8 @@ public class Utils {
     final List<String> list;
     private static final int MIN_DELAY_TIME = 1000;  // 两次点击间隔不能少于1000ms
     private static long lastClickTime;
+    private static DecimalFormat fileIntegerFormat = new DecimalFormat("#0");
+    private static DecimalFormat fileDecimalFormat = new DecimalFormat("#0.##");
 
     public Utils(List<String> list) {
         this.list = list;
@@ -177,6 +182,52 @@ public class Utils {
         lastClickTime = currentClickTime;
         return flag;
     }
+
+    public static String formatFileSize(long paramLong) {
+        DecimalFormat localDecimalFormat1 = fileIntegerFormat;
+        if ((paramLong < 1024L) && (paramLong > 0L)) {
+            return localDecimalFormat1.format(paramLong) + "B";
+        }
+        if (paramLong < 1048576L) {
+            return localDecimalFormat1.format(paramLong / 1024.0D) + "K";
+        }
+        if (paramLong < 1073741824L) {
+            return localDecimalFormat1.format(paramLong / 1048576.0D) + "M";
+        }
+        DecimalFormat localDecimalFormat2 = fileDecimalFormat;
+        return localDecimalFormat2.format(paramLong / 1073741824.0D) + "G";
+    }
+
+    public static long getAvailableExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            StatFs localStatFs = new StatFs(Environment.getExternalStorageDirectory().getPath());
+            return localStatFs.getBlockSize() * localStatFs.getAvailableBlocks();
+        }
+        return -1L;
+    }
+
+    public static boolean externalMemoryAvailable() {
+        return Environment.getExternalStorageState().equals("mounted");
+    }
+
+    public static long getTotalExternalMemorySize() {
+        if (!externalMemoryAvailable()) {
+            return -1;
+        }
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        return ((long) stat.getBlockCount()) * ((long) stat.getBlockSize());
+    }
+
+    public static long getAvailableInternalMemorySize() {
+        StatFs localStatFs = new StatFs(Environment.getDataDirectory().getPath());
+        return localStatFs.getBlockSize() * localStatFs.getAvailableBlocks();
+    }
+
+    public static long getTotalInternalMemorySize() {
+        StatFs localStatFs = new StatFs(Environment.getDataDirectory().getPath());
+        return localStatFs.getBlockSize() * localStatFs.getBlockCount();
+    }
+
 
     public static boolean stringIsEmpty(String string) {
         if (string == null || string.trim().equals(BuildConfig.VERSION_NAME) || string.trim().toLowerCase().equals("null") || string.trim().toLowerCase().equals("<null>")) {
