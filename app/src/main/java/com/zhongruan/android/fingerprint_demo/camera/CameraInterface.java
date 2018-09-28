@@ -4,12 +4,13 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.zhongruan.android.fingerprint_demo.camera.util.CamParaUtil;
-import com.zhongruan.android.fingerprint_demo.utils.LogUtil;
+import com.zhongruan.android.fingerprint_demo.utils.Utils;
 
 import java.io.IOException;
 import java.util.List;
@@ -100,13 +101,12 @@ public class CameraInterface {
     }
 
     public void cameraSwitch(SurfaceView surfaceView) {
-        if (Camera.getNumberOfCameras() > 1) {
+        if (Build.MODEL.equals(Utils.DEVICETYPE_YLT1)) {
             int newId = (CameraInterface.getInstance().getCameraId() + 1) % 2;
-            LogUtil.i("newId", newId);
             CameraInterface.getInstance().doStopCamera();
             CameraInterface.getInstance().doOpenCamera(newId);
             CameraInterface.getInstance().doStartPreview(surfaceView.getHolder(), 1.333f, 0);
-        } else {
+        } else if (Build.MODEL.equals(Utils.DEVICETYPE_YLT2)) {
             if (this.isPreviewing && this.mCamera != null) {
                 if (this.cameraRotateSys < 180) {
                     this.cameraRotateSys += 180;

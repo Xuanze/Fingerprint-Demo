@@ -10,13 +10,10 @@ import android.view.SurfaceView;
 
 public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
     private static final String TAG = "HNZR";
-    private Context mContext;
     public SurfaceHolder mSurfaceHolder;
 
     public CameraSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // TODO Auto-generated constructor stub
-        this.mContext = context;
         this.mSurfaceHolder = getHolder();
         this.mSurfaceHolder.setFormat(-2);
         this.mSurfaceHolder.setType(3);
