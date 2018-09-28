@@ -104,7 +104,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
     private ImageView mIvSelectall;
     private LinearLayout mLvSelectall;
     private List<Ks_kc> mXZksKcList;
-    private String TAG = "DataActivity";
+    private final String TAG = "DataActivity";
 
     @Override
     public void setContentView() {
