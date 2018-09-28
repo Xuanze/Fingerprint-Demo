@@ -35,12 +35,11 @@
 
             <TextView
                 android:id="@id/tv_inputTip"
-                android:layout_width="wrap_content"
+                android:layout_width="400dp"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_centerVertical="true"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
+                android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"

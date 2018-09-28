@@ -655,6 +655,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         if (DbServices.getInstance(getBaseContext()).loadAllkd().size() != 0) {
             mLlKsXx.setVisibility(View.VISIBLE);
             mTvKd.setVisibility(View.VISIBLE);
+            mTvKd.setSelected(true);
             mTvTs.setVisibility(View.GONE);
             mTvKd.setText(DbServices.getInstance(getBaseContext()).loadAllkd().get(0).getKd_name());
         } else {
@@ -664,6 +665,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         }
         ksKcList = DbServices.getInstance(getBaseContext()).selectKC();
         if (ksKcList.size() != 0) {
+            mTvKc.setSelected(true);
             mTvKc.setVisibility(View.VISIBLE);
             for (int i = 0; i < ksKcList.size(); i++) {
                 if (i == 0) {

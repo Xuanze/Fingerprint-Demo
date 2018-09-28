@@ -63,6 +63,7 @@ public class KWDJActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void initData() {
+        mTvInputTip.setSelected(true);
         ksKcList = DbServices.getInstance(getBaseContext()).selectKC();
         for (int i = 0; i < ksKcList.size(); i++) {
             if (i == 0) {

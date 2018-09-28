@@ -185,17 +185,17 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
                             showProgressDialog(SelectKcCcActivity.this, "正在提取所选场次数据...", false);
                             DbServices.getInstance(getBaseContext()).deleteAllrzks();
                             if (selectCcAdapter.getChosenCcList().size() > 0) {
-                                MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("UPDATE " + Ks_ccDao.TABLENAME + " SET  cc_extract = 0");
-                                MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("UPDATE " + Ks_ccDao.TABLENAME + " SET  cc_extract = 1 WHERE cc_no = " + cc.getCc_no());
-                                for (int i = 0; i < DbServices.getInstance(getBaseContext()).selectKC().size(); i++) {
-                                    MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Rz_ks_zwDao.TABLENAME + " (ks_ksno,ks_xm,ks_xb,ks_zjno,ks_zwh,ks_kcno,ks_kcmc,ks_xp,zw_bs,zw_feature) " + " select a.ksno,a.xm,a.xb,a.zjno,a.zw,a.kcno,a.kcmc,b.xp_pic,c.zw_position,c.zw_feature from " + Bk_ks_tempDao.TABLENAME + " as a," + Bk_ksxpDao.TABLENAME + " as b , " + Kstz_zwDao.TABLENAME + " as c where  (a.kcno = '" + DbServices.getInstance(getBaseContext()).selectKC().get(i).getKc_no() + "' AND a.ccno = '" + cc.getCc_no() + "'AND a.zjno=b.zjno  AND a.zjno=c.zjno) ");
-                                    if (DbServices.getInstance(getBaseContext()).queryBKKSList(DbServices.getInstance(getBaseContext()).selectKC().get(i).getKc_name(), cc.getCc_name()).size() == 0) {
-                                        MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Bk_ksDao.TABLENAME + " (ks_ksno,ks_xm,ks_xb,ks_zjno,ks_zwh,ks_ccno,ks_ccmc,ks_kcno,ks_kcmc,ks_xp,isRZ,rzTime) " + " select a.ksno,a.xm,a.xb,a.zjno,a.zw,a.ccno,a.ccmc,a.kcno,a.kcmc,b.xp_pic,'0','' from " + Bk_ks_tempDao.TABLENAME + " as a," + Bk_ksxpDao.TABLENAME + " as b where  (a.kcno = '" + DbServices.getInstance(getBaseContext()).selectKC().get(i).getKc_no() + "' AND a.ccno = '" + cc.getCc_no() + "'AND a.zjno=b.zjno)");
-                                    }
-                                }
                                 ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
                                     @Override
                                     public Object callback() {
+                                        MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("UPDATE " + Ks_ccDao.TABLENAME + " SET  cc_extract = 0");
+                                        MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("UPDATE " + Ks_ccDao.TABLENAME + " SET  cc_extract = 1 WHERE cc_no = " + cc.getCc_no());
+                                        for (int i = 0; i < DbServices.getInstance(getBaseContext()).selectKC().size(); i++) {
+                                            MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Rz_ks_zwDao.TABLENAME + " (ks_ksno,ks_xm,ks_xb,ks_zjno,ks_zwh,ks_kcno,ks_kcmc,ks_xp,zw_bs,zw_feature) " + " select a.ksno,a.xm,a.xb,a.zjno,a.zw,a.kcno,a.kcmc,b.xp_pic,c.zw_position,c.zw_feature from " + Bk_ks_tempDao.TABLENAME + " as a," + Bk_ksxpDao.TABLENAME + " as b , " + Kstz_zwDao.TABLENAME + " as c where  (a.kcno = '" + DbServices.getInstance(getBaseContext()).selectKC().get(i).getKc_no() + "' AND a.ccno = '" + cc.getCc_no() + "'AND a.zjno=b.zjno  AND a.zjno=c.zjno) ");
+                                            if (DbServices.getInstance(getBaseContext()).queryBKKSList(DbServices.getInstance(getBaseContext()).selectKC().get(i).getKc_name(), cc.getCc_name()).size() == 0) {
+                                                MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Bk_ksDao.TABLENAME + " (ks_ksno,ks_xm,ks_xb,ks_zjno,ks_zwh,ks_ccno,ks_ccmc,ks_kcno,ks_kcmc,ks_xp,isRZ,rzTime) " + " select a.ksno,a.xm,a.xb,a.zjno,a.zw,a.ccno,a.ccmc,a.kcno,a.kcmc,b.xp_pic,'0','' from " + Bk_ks_tempDao.TABLENAME + " as a," + Bk_ksxpDao.TABLENAME + " as b where  (a.kcno = '" + DbServices.getInstance(getBaseContext()).selectKC().get(i).getKc_no() + "' AND a.ccno = '" + cc.getCc_no() + "'AND a.zjno=b.zjno)");
+                                            }
+                                        }
                                         if (DbServices.getInstance(getBaseContext()).loadAllrzkszw().size() > 0 && DbServices.getInstance(getBaseContext()).queryBKKSList(DbServices.getInstance(getBaseContext()).selectKC(), cc.getCc_name()).size() > 0) {
                                             return Boolean.valueOf(true);
                                         } else {

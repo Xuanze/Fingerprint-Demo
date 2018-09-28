@@ -192,6 +192,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void initData() {
+        mTvTitle.setSelected(true);
         setTimer();
     }
 
