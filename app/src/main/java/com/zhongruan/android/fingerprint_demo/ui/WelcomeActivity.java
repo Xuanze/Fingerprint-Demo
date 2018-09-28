@@ -149,6 +149,16 @@ public class WelcomeActivity extends BaseActivity {
                 idTvLoadingmsg.setText("服务启动成功");
                 startActivity(new Intent(WelcomeActivity.this, TestActivity.class));
                 finish();
+            } else {
+                new HintDialog(WelcomeActivity.this, R.style.dialog, "驱动启动异常，请联系技术服务人员！", new HintDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        if (confirm) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    }
+                }).setBackgroundResource(R.drawable.img_base_icon_error).setNOVisibility(false).setLLButtonVisibility(true).setTitle("提示").setPositiveButton("知道了").show();
             }
         }
     }
