@@ -341,7 +341,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                         new Runnable() {
                                             @Override
                                             public void run() {
-                                                if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
+                                                if (deleteRecord()) {
                                                     isUSB = false;
                                                     String path = getAppSavePath() + "/DataTemp/";
                                                     File file = new File(path);
@@ -355,7 +355,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                                     ShowHintDialog(DataActivity.this, "清空数据失败！", "网络导入数据", R.drawable.img_base_icon_error, "知道了", false);
                                                     return;
                                                 }
-                                                LogUtil.i(isReceive);
+                                                LogUtil.i(TAG, "数据包下载：" + isReceive);
                                             }
                                         }.run();
                                         return isReceive;
@@ -372,14 +372,18 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                             NewFile = StringUtils.substringAfterLast(array[0].getPath(), "/");
                                             NewFilePath = StringUtils.substringBeforeLast(NewFile, ".");
                                             unZipFile(array[0].getPath(), StringUtils.substringBeforeLast(array[0].getPath(), "."), "mst");
-                                        } else {
+                                        } else if ((int) obj == 0) {
                                             dismissProgressDialog();
-                                            ShowHintDialog(DataActivity.this, "考点端没有数据，请进行生成基础数据操作！", "U盘导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                                            ShowHintDialog(DataActivity.this, "暂无数据，请检查服务器是否生成数据包！", "网络导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                                        }else if ((int) obj == -1){
+                                            dismissProgressDialog();
+                                            multiProgressDialog.dismiss();
+                                            ShowHintDialog(DataActivity.this, "网络通讯异常，请检查网络是否连接服务器！", "网络导入数据", R.drawable.img_base_icon_error, "知道了", false);
                                         }
                                     }
                                 });
                             } else {
-                                ShowHintDialog(DataActivity.this, "请检查网络是否连接服务器", "网络导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                                ShowHintDialog(DataActivity.this, "网络通讯异常，请检查网络是否连接服务器！", "网络导入数据", R.drawable.img_base_icon_error, "知道了", false);
                             }
                         } else {
                             dialog.dismiss();
@@ -554,7 +558,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                                         showProgressDialog(DataActivity.this, "正在复制压缩文件到U盘...", false);
                                                         File tempFolder = new File(getAppSavePath() + "/TempZIP/" + cjFile.getName() + ".zip");
                                                         String USBPath = FileUtils.copyFileToUSB(tempFolder);
-                                                        LogUtil.i(TAG, "USBPath:" + USBPath.toString());
+                                                        LogUtil.i(TAG, "USBPath:" + USBPath);
                                                         dismissProgressDialog();
                                                         if (!stringIsEmpty(USBPath)) {
                                                             ShowHintDialog(DataActivity.this, "采集数据导出成功", "U盘导出采集数据", R.drawable.img_base_check, "知道了", false);
@@ -612,7 +616,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void run() {
                 showProgressDialog(DataActivity.this, "正在清空数据...", false);
-                if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
+                if (deleteRecord()) {
                     dismissProgressDialog();
                 }
                 MyApplication.getApplication().setShouldStopUploadingData(true);
@@ -795,6 +799,28 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
     }
 
     /**
+     * 删除历史数据记录
+     */
+    private boolean deleteRecord() {
+        if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
+            DbServices.getInstance(DataActivity.this).deleteAlltemp();
+            DbServices.getInstance(DataActivity.this).deleteAllxp();
+            DbServices.getInstance(DataActivity.this).deleteAllrzks();
+            DbServices.getInstance(DataActivity.this).deleteAllzw();
+            DbServices.getInstance(DataActivity.this).deleteAllcc();
+            DbServices.getInstance(DataActivity.this).deleteAllkc();
+            DbServices.getInstance(DataActivity.this).deleteAllkd();
+            DbServices.getInstance(DataActivity.this).deleteAllkm();
+            DbServices.getInstance(DataActivity.this).deleteAllbkks();
+            DbServices.getInstance(DataActivity.this).deleteAllrzjl();
+            DbServices.getInstance(DataActivity.this).deleteAllrzjg();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 读取TXT文件内容写入数据库
      *
      * @param fileName      文件名
@@ -959,7 +985,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                         ll_buttons.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if (!Utils.isFastClick()){
+                                if (!Utils.isFastClick()) {
                                     titleData.setText("数据管理");
                                     mXZksKcList = selectKcMcAdapter.getChosenKcList();
                                     if (mXZksKcList.size() > 0) {

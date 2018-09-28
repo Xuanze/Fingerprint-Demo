@@ -57,15 +57,14 @@ import rx.android.BuildConfig;
  * Created by Administrator on 2017/8/1.
  */
 public class TestActivity extends BaseActivity implements View.OnClickListener {
-    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfcj, linearlayoutCjjl, linearlayoutSfrz, linearlayoutKwdj, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz, ll_test_cqqd;
-    private TextView nowtimeTv, nowdayTv, localipTv, tvConnectState, netipTv, upload_app_tv, version_app_tv;
+    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfcj, linearlayoutCjjl, linearlayoutSfrz, linearlayoutKwdj, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz, ll_test_cqqd, mLlKsXx;
+    private TextView nowtimeTv, nowdayTv, localipTv, tvConnectState, netipTv, upload_app_tv, version_app_tv, mTvKd, mTvKc, mTvCc, mTvTs;
     private ImageView imgConnectState;
     private SocketClient client;
     private Map<String, Object> map;
     private List<Ks_cc> cc;
     private List<Ks_kc> kc;
     private boolean receive;
-    private TextView mTvKd;
     private MyTimeTask timeTask;
     private Intent intent;
     private MyReceiver myReceiver;
@@ -73,6 +72,8 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     private final int socketStr = 11111;
     private final int timeStr = 22222;
     private final int ipStr = 33333;
+    private List<Ks_kc> ksKcList;
+    private String kcmc;
     private Handler checkMessageHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -121,6 +122,10 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         version_app_tv = findViewById(R.id.version_app_tv);
         llNowtime = findViewById(R.id.ll_nowtime);
         mTvKd = findViewById(R.id.tv_kd);
+        mTvKc = findViewById(R.id.tv_kc);
+        mTvCc = findViewById(R.id.tv_cc);
+        mLlKsXx = findViewById(R.id.ll_ksxx);
+        mTvTs = findViewById(R.id.tv_ts);
         intent = new Intent(this, MyService.class);
     }
 
@@ -408,7 +413,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                             //启动服务
                             startService(new Intent(TestActivity.this, MyService.class));
                             //注册广播接收器
-                            if (!isRegister){
+                            if (!isRegister) {
                                 myReceiver = new MyReceiver();
                                 IntentFilter filter = new IntentFilter();
                                 filter.addAction("MyService");
@@ -557,7 +562,11 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     DbServices.getInstance(TestActivity.this).saveRZJG(rzjg.getRzjg_time());
                     ChangeText(kc, cc);
                 } else {
-                    uploadRzjg(rzjg);
+                    if (ConfigApplication.getApplication().getKDConnectState()) {
+                        return;
+                    } else {
+                        uploadRzjg(rzjg);
+                    }
                 }
             }
         });
@@ -585,7 +594,11 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                 if (((Boolean) obj).booleanValue()) {
                     DbServices.getInstance(TestActivity.this).saveRZJL(rzjl.getRzjl_time());
                 } else {
-                    uploadRzjl(rzjl);
+                    if (ConfigApplication.getApplication().getKDConnectState()) {
+                        return;
+                    } else {
+                        uploadRzjl(rzjl);
+                    }
                 }
             }
         });
@@ -640,10 +653,34 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         MyApplication.getApplication().setShouldStopUploadingData(false);
         List<Sb_setting> settingList = DbServices.getInstance(getBaseContext()).loadAllSbSetting();
         if (DbServices.getInstance(getBaseContext()).loadAllkd().size() != 0) {
+            mLlKsXx.setVisibility(View.VISIBLE);
             mTvKd.setVisibility(View.VISIBLE);
-            mTvKd.setText("（" + DbServices.getInstance(getBaseContext()).loadAllkd().get(0).getKd_name() + "）");
+            mTvTs.setVisibility(View.GONE);
+            mTvKd.setText(DbServices.getInstance(getBaseContext()).loadAllkd().get(0).getKd_name());
         } else {
+            mLlKsXx.setVisibility(View.GONE);
             mTvKd.setVisibility(View.GONE);
+            mTvTs.setVisibility(View.VISIBLE);
+        }
+        ksKcList = DbServices.getInstance(getBaseContext()).selectKC();
+        if (ksKcList.size() != 0) {
+            mTvKc.setVisibility(View.VISIBLE);
+            for (int i = 0; i < ksKcList.size(); i++) {
+                if (i == 0) {
+                    kcmc = ksKcList.get(i).getKc_name();
+                } else {
+                    kcmc = kcmc + " " + ksKcList.get(i).getKc_name();
+                }
+            }
+            mTvKc.setText(kcmc);
+        } else {
+            mTvKc.setVisibility(View.GONE);
+        }
+        if (DbServices.getInstance(getBaseContext()).selectCC().size() != 0) {
+            mTvCc.setVisibility(View.VISIBLE);
+            mTvCc.setText(DbServices.getInstance(getBaseContext()).selectCC().get(0).getCc_name());
+        } else {
+            mTvCc.setVisibility(View.GONE);
         }
         if (settingList.get(0).getSb_ms().equals("0")) {
             linearlayoutSfcj.setVisibility(View.VISIBLE);

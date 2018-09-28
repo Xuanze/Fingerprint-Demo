@@ -124,7 +124,7 @@
 
             <LinearLayout
                 android:id="@id/lv_selectall"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="30.0dip"
                 android:layout_marginBottom="5.0dip"
                 android:layout_marginLeft="30.0dip"

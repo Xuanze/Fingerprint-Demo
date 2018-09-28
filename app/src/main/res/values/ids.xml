@@ -364,4 +364,8 @@
     <item name="tv_storage" type="id" />
     <item name="tv_storage_tip" type="id" />
     <item name="tv_storage_tip2" type="id" />
+    <item name="tv_kc" type="id" />
+    <item name="tv_cc" type="id" />
+    <item name="ll_ksxx" type="id" />
+    <item name="tv_ts" type="id" />
 </resources>

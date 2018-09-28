@@ -81,21 +81,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void initData() {
-        if (Utils.externalMemoryAvailable()) {
-            size = Utils.getAvailableExternalMemorySize();
-            total = Utils.getTotalExternalMemorySize();
-            LogUtil.i("执行1:" + size + "   " + total);
-        } else {
-            LogUtil.i("执行2:" + size + "   " + total);
-            size = Utils.getAvailableInternalMemorySize();
-            total = Utils.getTotalInternalMemorySize();
-        }
-        mTvStorage.setText(Utils.formatFileSize(size) + " / " + Utils.formatFileSize(total));
-        if (size < 104857600) {
-            mTvStorageTip.setVisibility(View.VISIBLE);
-        } else {
-            mTvStorageTip.setVisibility(View.GONE);
-        }
+        updateMemory();
         if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_ms()) == 0) {
             mTvMsChange.setText("采集模式");
         } else {
@@ -202,7 +188,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                             ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
                                 @Override
                                 public Object callback() {
-                                    if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
+                                    if (deleteRecord()) {
                                         try {
                                             Thread.sleep(2000);
                                         } catch (InterruptedException e) {
@@ -216,7 +202,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                             }, new ABLSynCallback.ForegroundCall() {
                                 @Override
                                 public void callback(Object obj) {
-                                    if (((Boolean) obj).booleanValue()){
+                                    if (((Boolean) obj).booleanValue()) {
+                                        updateMemory();
                                         dismissProgressDialog();
                                     }
                                 }
@@ -227,6 +214,49 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     }
                 }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("U盘导入数据").setPositiveButton("是").setNegativeButton("否").show();
                 break;
+        }
+    }
+
+    /**
+     * 删除历史数据记录
+     */
+    private boolean deleteRecord() {
+        if (delFolder("DataTemp") && delFolder("bk_ksxp") && delFolder("sfrz_rzjl")) {
+            DbServices.getInstance(SettingActivity.this).deleteAlltemp();
+            DbServices.getInstance(SettingActivity.this).deleteAllxp();
+            DbServices.getInstance(SettingActivity.this).deleteAllrzks();
+            DbServices.getInstance(SettingActivity.this).deleteAllzw();
+            DbServices.getInstance(SettingActivity.this).deleteAllcc();
+            DbServices.getInstance(SettingActivity.this).deleteAllkc();
+            DbServices.getInstance(SettingActivity.this).deleteAllkd();
+            DbServices.getInstance(SettingActivity.this).deleteAllkm();
+            DbServices.getInstance(SettingActivity.this).deleteAllbkks();
+            DbServices.getInstance(SettingActivity.this).deleteAllrzjl();
+            DbServices.getInstance(SettingActivity.this).deleteAllrzjg();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 更新剩余空间
+     */
+    private void updateMemory() {
+        if (Utils.externalMemoryAvailable()) {
+            size = Utils.getAvailableExternalMemorySize();
+            total = Utils.getTotalExternalMemorySize();
+            LogUtil.i("执行1:" + size + "   " + total);
+        } else {
+            LogUtil.i("执行2:" + size + "   " + total);
+            size = Utils.getAvailableInternalMemorySize();
+            total = Utils.getTotalInternalMemorySize();
+        }
+        mTvStorage.setText(Utils.formatFileSize(size) + " / " + Utils.formatFileSize(total));
+        if (size < 104857600) {
+            mTvStorageTip.setVisibility(View.VISIBLE);
+        } else {
+            mTvStorageTip.setVisibility(View.GONE);
         }
     }
 }
