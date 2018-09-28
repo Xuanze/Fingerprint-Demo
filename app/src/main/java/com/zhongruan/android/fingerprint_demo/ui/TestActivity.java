@@ -723,6 +723,5 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         MyApplication.getYltFingerEngine().freeEngine();
         MyApplication.getYltIdCardEngine().freeEngine();
         stopService(intent);
-        unregisterReceiver(myReceiver);
     }
 }

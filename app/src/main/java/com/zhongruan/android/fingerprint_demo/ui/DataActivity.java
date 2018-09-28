@@ -375,7 +375,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                         } else if ((int) obj == 0) {
                                             dismissProgressDialog();
                                             ShowHintDialog(DataActivity.this, "暂无数据，请检查服务器是否生成数据包！", "网络导入数据", R.drawable.img_base_icon_error, "知道了", false);
-                                        }else if ((int) obj == -1){
+                                        } else if ((int) obj == -1) {
                                             dismissProgressDialog();
                                             multiProgressDialog.dismiss();
                                             ShowHintDialog(DataActivity.this, "网络通讯异常，请检查网络是否连接服务器！", "网络导入数据", R.drawable.img_base_icon_error, "知道了", false);
@@ -612,26 +612,26 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
      * 复制U盘压缩包到本地
      */
     private void copyFile() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                showProgressDialog(DataActivity.this, "正在清空数据...", false);
+        showProgressDialog(DataActivity.this, "正在清空数据...", false);
+        ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+            public Object callback() {
                 if (deleteRecord()) {
                     dismissProgressDialog();
                 }
                 MyApplication.getApplication().setShouldStopUploadingData(true);
-            }
-        });
-        isUSB = true;
-        Message message1 = new Message();
-        message1.what = 0;
-        handler.sendMessage(message1);
-        ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
-            public Object callback() {
+                isUSB = true;
+                Message message1 = new Message();
+                message1.what = 0;
+                handler.sendMessage(message1);
                 if (tempList == null || tempList.size() <= 0) {
-                    return Boolean.valueOf(false);
+                    return false;
+                } else {
+                    if (FileUtils.copyFile(tempList)){
+                        return true;
+                    }else {
+                        return false;
+                    }
                 }
-                return Boolean.valueOf(FileUtils.copyFile(tempList));
             }
         }, new ABLSynCallback.ForegroundCall() {
             public void callback(Object obj) {
@@ -679,7 +679,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                             dialog.dismiss();
                         }
                     }
-                }).setTitle("请输入解压密码").setHint("请输入解压密码").setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD).show();
+                }).setTitle("请输入解压密码").setHint("请输入解压密码").setInputType(InputType.TYPE_TEXT_VARIATION_WEB_PASSWORD).show();
             } else {
                 unZipFile(NewPith + NewFile, NewPith + NewFilePath, pwd);
             }

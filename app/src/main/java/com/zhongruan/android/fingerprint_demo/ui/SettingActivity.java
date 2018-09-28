@@ -205,6 +205,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                                     if (((Boolean) obj).booleanValue()) {
                                         updateMemory();
                                         dismissProgressDialog();
+                                        ShowHintDialog(SettingActivity.this, "清空数据完成", "提示", R.drawable.img_base_icon_correct, "知道了", false);
                                     }
                                 }
                             });
