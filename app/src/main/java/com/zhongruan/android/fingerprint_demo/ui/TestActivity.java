@@ -57,7 +57,7 @@ import rx.android.BuildConfig;
  * Created by Administrator on 2017/8/1.
  */
 public class TestActivity extends BaseActivity implements View.OnClickListener {
-    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfcj, linearlayoutCjjl, linearlayoutSfrz, linearlayoutKwdj, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz, ll_test_cqqd, mLlKsXx;
+    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfcj, linearlayoutCjjl, linearlayoutSfrz, linearlayoutKwdj, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz, ll_test_cqqd;
     private TextView nowtimeTv, nowdayTv, localipTv, tvConnectState, netipTv, upload_app_tv, version_app_tv, mTvKd, mTvKc, mTvCc, mTvTs;
     private ImageView imgConnectState;
     private SocketClient client;
@@ -125,7 +125,6 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         mTvKd = findViewById(R.id.tv_kd);
         mTvKc = findViewById(R.id.tv_kc);
         mTvCc = findViewById(R.id.tv_cc);
-        mLlKsXx = findViewById(R.id.ll_ksxx);
         mTvTs = findViewById(R.id.tv_ts);
         intent = new Intent(this, MyService.class);
     }
@@ -663,13 +662,11 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         MyApplication.getApplication().setShouldStopUploadingData(false);
         List<Sb_setting> settingList = DbServices.getInstance(getBaseContext()).loadAllSbSetting();
         if (DbServices.getInstance(getBaseContext()).loadAllkd().size() != 0) {
-            mLlKsXx.setVisibility(View.VISIBLE);
             mTvKd.setVisibility(View.VISIBLE);
             mTvKd.setSelected(true);
             mTvTs.setVisibility(View.GONE);
             mTvKd.setText(DbServices.getInstance(getBaseContext()).loadAllkd().get(0).getKd_name());
         } else {
-            mLlKsXx.setVisibility(View.GONE);
             mTvKd.setVisibility(View.GONE);
             mTvTs.setVisibility(View.VISIBLE);
         }

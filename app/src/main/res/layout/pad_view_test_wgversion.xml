@@ -39,95 +39,89 @@
         android:background="@color/color_divider_line"
         android:paddingTop="32dp"
         android:paddingBottom="18dip" />
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:gravity="center"
+        android:orientation="vertical">
+        <TextView
+            android:id="@id/tv_kd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="（河南高校）"
+            android:textColor="#fffe554f"
+            android:textSize="@dimen/twentyOne_sp" />
+        <TextView
+            android:id="@id/tv_kc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:text="（河南高校）"
+            android:textColor="#fffe554f"
+            android:textSize="@dimen/twentyOne_sp" />
+        <TextView
+            android:id="@id/tv_cc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:text="（河南高校）"
+            android:textColor="#fffe554f"
+            android:textSize="@dimen/twentyOne_sp" />
+        <TextView
+            android:id="@id/tv_ts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingLeft="10.0dip"
+            android:text="暂无数据导入"
+            android:textColor="#fffe554f"
+            android:textSize="@dimen/twentyFour_sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="1.0px"
+        android:layout_height="40.0dip"
+        android:background="@color/color_divider_line"
+        android:paddingTop="32dp"
+        android:paddingBottom="18dip" />
+
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1.0"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingTop="32dp"
+        android:paddingBottom="18dip">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3.0"
+        <ImageView
+            android:layout_width="30.0dip"
+            android:layout_height="30.0dip"
+            android:background="@drawable/img_module_tab_footer_base_icon_info" />
+
+        <TextView
+            android:id="@id/version_app_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingTop="32dp"
-            android:paddingBottom="18dip">
-
-            <ImageView
-                android:layout_width="30.0dip"
-                android:layout_height="30.0dip"
-                android:background="@drawable/img_module_tab_footer_base_icon_info" />
-
-            <TextView
-                android:id="@id/version_app_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLines="1"
-                android:paddingLeft="10.0dip"
-                android:text="河南省2018年高考"
-                android:textColor="@color/version_black"
-                android:textSize="@dimen/twentyFour_sp" />
-
-            <TextView
-                android:id="@id/tv_ts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:maxLines="1"
-                android:paddingLeft="10.0dip"
-                android:text="（暂无数据导入）"
-                android:textColor="#fffe554f"
-                android:textSize="@dimen/twentyFour_sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@id/ll_ksxx"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2.0"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@id/tv_kd"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text="（河南高校）"
-                android:textColor="#fffe554f"
-                android:textSize="@dimen/twentyOne_sp" />
-
-            <TextView
-                android:id="@id/tv_kc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:gravity="center"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:text="（河南高校）"
-                android:textColor="#fffe554f"
-                android:textSize="@dimen/twentyOne_sp" />
-
-            <TextView
-                android:id="@id/tv_cc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:text="（河南高校）"
-                android:textColor="#fffe554f"
-                android:textSize="@dimen/twentyOne_sp" />
-        </LinearLayout>
+            android:maxLines="1"
+            android:paddingLeft="10.0dip"
+            android:text="河南省2018年高考"
+            android:textColor="@color/version_black"
+            android:textSize="@dimen/twentyFour_sp" />
     </LinearLayout>
 </LinearLayout>
