@@ -17,6 +17,7 @@ public class ABLConfig {
     public static final String KD_CONNECT_STATE = "KD_CONNECT_STATE";
     public static final String USB_IMPORT_TIME = "USB_IMPORT_TIME";
     public static final String USB_EXPORT_TIME = "USB_EXPORT_TIME";
+    public static final String NET_EXPORT_TIME = "NET_EXPORT_TIME";
     public static final String CJ_EXPORT_TIME = "CJ_EXPORT_TIME";
     public static final String NET_IMPORT_TIME = "NET_IMPORT_TIME";
     public static final int RZJL = 306;

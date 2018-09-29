@@ -241,6 +241,8 @@
     <item name="tvContent2" type="id" />
     <item name="tvContent3" type="id" />
     <item name="tv_rz_usb_dc" type="id" />
+    <item name="ll_net_dc" type="id" />
+    <item name="tv_rz_net_dc" type="id" />
     <item name="listitem_rzjg" type="id" />
     <item name="listitem_rzjgsj" type="id" />
     <item name="listitem_rzjg_spread" type="id" />

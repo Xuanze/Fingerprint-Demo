@@ -108,6 +108,14 @@ public class ConfigApplication {
         return PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.USB_EXPORT_TIME, ABLConfig.IMPORT_TIME);
     }
 
+    public void setNetExportTime(String time) {
+        PreferenceUtils.getInstance(MyApplication.getApplication()).setPrefString(ABLConfig.NET_EXPORT_TIME, time);
+    }
+
+    public String getNetExportTime() {
+        return PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.NET_EXPORT_TIME, ABLConfig.IMPORT_TIME);
+    }
+
     public void setCJExportTime(String time) {
         PreferenceUtils.getInstance(MyApplication.getApplication()).setPrefString(ABLConfig.CJ_EXPORT_TIME, time);
     }

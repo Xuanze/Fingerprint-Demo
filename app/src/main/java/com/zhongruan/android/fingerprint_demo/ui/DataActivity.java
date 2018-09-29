@@ -105,6 +105,8 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
     private LinearLayout mLvSelectall;
     private List<Ks_kc> mXZksKcList;
     private final String TAG = "DataActivity";
+    private TextView mTvRzNetDc;
+    private LinearLayout mLlNetDc;
 
     @Override
     public void setContentView() {
@@ -132,6 +134,8 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
         tv_cj_usb_dc = findViewById(R.id.tv_cj_usb_dc);
         mIvSelectall = findViewById(R.id.iv_selectall);
         mLvSelectall = findViewById(R.id.lv_selectall);
+        mTvRzNetDc = findViewById(R.id.tv_rz_net_dc);
+        mLlNetDc = findViewById(R.id.ll_net_dc);
         handler = new MyHandler();
         if (!stringIsEmpty(ConfigApplication.getApplication().getUsbImportTime())) {
             tvUsbDr.setText("最近导入：" + ConfigApplication.getApplication().getUsbImportTime());
@@ -142,6 +146,9 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
         if (!stringIsEmpty(ConfigApplication.getApplication().getUsbExportTime())) {
             tv_rz_usb_dc.setText("最近导入：" + ConfigApplication.getApplication().getUsbExportTime());
         }
+        if (!stringIsEmpty(ConfigApplication.getApplication().getNetExportTime())) {
+            mTvRzNetDc.setText("最近导入：" + ConfigApplication.getApplication().getNetExportTime());
+        }
         if (!stringIsEmpty(ConfigApplication.getApplication().getCJExportTime())) {
             tv_cj_usb_dc.setText("最近导入：" + ConfigApplication.getApplication().getCJExportTime());
         }
@@ -149,6 +156,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void initListeners() {
+        mLlNetDc.setOnClickListener(this);
         llDataBack.setOnClickListener(this);
         llUsbDr.setOnClickListener(this);
         llNetDr.setOnClickListener(this);
@@ -419,15 +427,6 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                                 @Override
                                                 public Object callback() {
                                                     if (delFolder("ExportData") && delFolder("TempZIP")) {
-                                                        return true;
-                                                    } else {
-                                                        return false;
-                                                    }
-                                                }
-                                            }, new ABLSynCallback.ForegroundCall() {
-                                                @Override
-                                                public void callback(Object obj) {
-                                                    if (((Boolean) obj).booleanValue()) {
                                                         showProgressDialog(DataActivity.this, "正在生成TXT文件...", false);
                                                         for (int i = 0; i < listRzjl.size(); i++) {
                                                             FileUtils.writeTxtToFile(listRzjl.get(i).toString(), getAppSavePath() + "/ExportData/" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_/", "sfrz_rzjl.txt");
@@ -438,6 +437,15 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                                         for (int i = 0; i < bkKsTempList.size(); i++) {
                                                             FileUtils.writeTxtToFile(bkKsTempList.get(i).toString(), getAppSavePath() + "/ExportData/" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_/", "bk_ks.txt");
                                                         }
+                                                        return true;
+                                                    } else {
+                                                        return false;
+                                                    }
+                                                }
+                                            }, new ABLSynCallback.ForegroundCall() {
+                                                @Override
+                                                public void callback(Object obj) {
+                                                    if (((Boolean) obj).booleanValue()) {
                                                         ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
                                                             @Override
                                                             public Object callback() {
@@ -605,6 +613,114 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                 this.selectKcMcAdapter.selectAll();
                 resetKcText();
                 break;
+            case R.id.ll_net_dc:
+                new HintDialog(this, R.style.dialog, "是否导出认证数据包到服务器？", new HintDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        if (confirm) {
+                            dialog.dismiss();
+                            showProgressDialog(DataActivity.this, "正在导出数据库数据...", false);
+                            listRzjl = DbServices.getInstance(DataActivity.this).loadAllrzjl();
+                            listRzjg = DbServices.getInstance(DataActivity.this).loadAllrzjg();
+                            bkKsTempList = DbServices.getInstance(DataActivity.this).selectDOWNBKKS(DbServices.getInstance(getBaseContext()).selectCC().get(0).getCc_no());
+                            if (listRzjl.size() > 0 && listRzjg.size() > 0) {
+                                ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                                    @Override
+                                    public Object callback() {
+                                        if (delFolder("ExportData") && delFolder("TempZIP")) {
+                                            showProgressDialog(DataActivity.this, "正在生成TXT文件...", false);
+                                            for (int i = 0; i < listRzjl.size(); i++) {
+                                                FileUtils.writeTxtToFile(listRzjl.get(i).toString(), getAppSavePath() + "/ExportData/" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_/", "sfrz_rzjl.txt");
+                                            }
+                                            for (int i = 0; i < listRzjg.size(); i++) {
+                                                FileUtils.writeTxtToFile(listRzjg.get(i).toString(), getAppSavePath() + "/ExportData/" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_/", "sfrz_rzjg.txt");
+                                            }
+                                            for (int i = 0; i < bkKsTempList.size(); i++) {
+                                                FileUtils.writeTxtToFile(bkKsTempList.get(i).toString(), getAppSavePath() + "/ExportData/" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_/", "bk_ks.txt");
+                                            }
+                                            return true;
+                                        } else {
+                                            return false;
+                                        }
+                                    }
+                                }, new ABLSynCallback.ForegroundCall() {
+                                    @Override
+                                    public void callback(Object obj) {
+                                        if (((Boolean) obj).booleanValue()) {
+                                            ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                                                @Override
+                                                public Object callback() {
+                                                    if (FileUtils.copyFolder(getAppSavePath() + "/sfrz_rzjl/", getAppSavePath() + "/ExportData/" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_/sfrz_rzjl/")) {
+                                                        return true;
+                                                    } else {
+                                                        return false;
+                                                    }
+                                                }
+                                            }, new ABLSynCallback.ForegroundCall() {
+                                                @Override
+                                                public void callback(Object obj) {
+                                                    if (((Boolean) obj).booleanValue()) {
+                                                        File file1 = new File(getAppSavePath() + "/ExportData/" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_/");
+                                                        zipFile = new File(getAppSavePath() + "/ExportData/" + "mst_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_no() + "_" + DbServices.getInstance(DataActivity.this).loadAllkd().get(0).getKd_name() + "_" + DateUtil.getNowTime2());
+                                                        if (file1.renameTo(zipFile)) {
+                                                            ArchiverManager.getInstance().doArchiver(getAppSavePath() + "/ExportData/" + zipFile.getName(), getAppSavePath() + "/TempZIP/", true, "mst", ArchiverManager.ArchiverType._ZIP, new IArchiverListener() {
+                                                                @Override
+                                                                public void onStartArchiver() {
+                                                                    LogUtil.i("时间：" + System.currentTimeMillis());
+                                                                    showProgressDialog(DataActivity.this, "开始压缩文件...", false);
+                                                                    showProgressDialog(DataActivity.this, "正在压缩文件...", false);
+                                                                }
+
+                                                                @Override
+                                                                public void onProgressArchiver(int current, int total) {
+                                                                }
+
+                                                                @Override
+                                                                public void onEndArchiver() {
+                                                                    ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                                                                        @Override
+                                                                        public Object callback() {
+                                                                            showProgressDialog(DataActivity.this, "压缩完成，校验压缩包完整性...", false);
+                                                                            showProgressDialog(DataActivity.this, "正在上传数据到考点服务器...", false);
+                                                                            SocketClient socketClient = new SocketClient(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_ip());
+                                                                            return socketClient.sendFile("", 307, getAppSavePath() + "/TempZIP/" + zipFile.getName() + ".zip", zipFile.getName() + ".zip").get("success");
+                                                                        }
+                                                                    }, new ABLSynCallback.ForegroundCall() {
+                                                                        @Override
+                                                                        public void callback(Object obj) {
+                                                                            dismissProgressDialog();
+                                                                            if (((Boolean) obj).booleanValue()) {
+                                                                                ShowHintDialog(DataActivity.this, "上传到考点服务器成功", "提示", R.drawable.img_base_check, "知道了", false);
+                                                                                ConfigApplication.getApplication().setNetExportTime(DateUtil.getNowTime());
+                                                                                mTvRzNetDc.setText("最近导入：" + ConfigApplication.getApplication().getNetExportTime());
+                                                                            } else {
+                                                                                ShowHintDialog(DataActivity.this, "上传到考点服务器失败", "提示", R.drawable.img_base_icon_error, "知道了", false);
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                        }
+                                                    } else {
+                                                        ShowHintDialog(DataActivity.this, "上传到考点服务器失败", "提示", R.drawable.img_base_icon_error, "知道了", false);
+                                                    }
+                                                }
+                                            });
+                                        } else {
+                                            ShowHintDialog(DataActivity.this, "上传到考点服务器失败", "提示", R.drawable.img_base_icon_error, "知道了", false);
+                                        }
+                                    }
+                                });
+                            } else {
+                                ShowHintDialog(DataActivity.this, "暂无认证数据", "提示", R.drawable.img_base_icon_error, "知道了", false);
+                            }
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setLLButtonVisibility(true).setTitle("提示").setPositiveButton("是").setNegativeButton("否").show();
+
+                break;
         }
     }
 
@@ -626,9 +742,9 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                 if (tempList == null || tempList.size() <= 0) {
                     return false;
                 } else {
-                    if (FileUtils.copyFile(tempList)){
+                    if (FileUtils.copyFile(tempList)) {
                         return true;
-                    }else {
+                    } else {
                         return false;
                     }
                 }
