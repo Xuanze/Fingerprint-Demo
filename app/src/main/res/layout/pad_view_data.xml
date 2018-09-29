@@ -144,7 +144,7 @@
                 android:id="@id/ll_usb_dc"
                 android:layout_width="match_parent"
                 android:layout_height="50.0dip"
-                android:background="@drawable/shape_setting_selector_top_bottom"
+                android:background="@drawable/shape_setting_selector_center"
                 android:clickable="true"
                 android:orientation="horizontal"
                 android:paddingLeft="15.0dip">
@@ -173,7 +173,7 @@
                 android:id="@id/ll_net_dc"
                 android:layout_width="match_parent"
                 android:layout_height="50.0dip"
-                android:background="@drawable/shape_setting_selector_top_bottom"
+                android:background="@drawable/shape_setting_selector_center"
                 android:clickable="true"
                 android:orientation="horizontal"
                 android:paddingLeft="15.0dip">
