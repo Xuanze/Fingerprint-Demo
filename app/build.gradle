@@ -52,6 +52,7 @@ dependencies {
     implementation files('libs/AraBMApiIccard.jar')
     implementation files('libs/AraBMApiIdcard.jar')
     implementation files('libs/AraBMApiQrc.jar')
+    implementation files('libs/AraFaceAuthLib.jar')
     implementation 'org.greenrobot:greendao:3.2.0'
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:27.1.1'

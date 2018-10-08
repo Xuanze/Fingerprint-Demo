@@ -11,10 +11,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -52,6 +54,8 @@ import java.util.List;
 import java.util.TimerTask;
 
 import cn.com.aratek.dev.Terminal;
+import cn.com.aratek.facelib.AraFaceAuthLib;
+import cn.com.aratek.facelib.FaceAuthListeners;
 
 /**
  * 身份认证
@@ -60,7 +64,28 @@ import cn.com.aratek.dev.Terminal;
 public class RZActivity extends BaseActivity implements View.OnClickListener {
     private LinearLayout llSwitch, llPhoto, mLlBack, mLlChangeCc, ll_kwdj, layout_view_finger, include_idcard, ll_inputIdCard, layout_view_face, layout_view_rz_face, state_camera, layout_view_kslist;
     private TextView mTvCountUnverified, mTvTitle, mTvCountVerified, mTvCountTotal, mTvTime, mTvDate, mTvTip, mTvKsName, mTvKsSeat, mKsResult, mTvKsSfzh, mTvKsKc, mTvKsno;
-    private RelativeLayout rl_camera;
+    private RelativeLayout rl_camera, layout_view_finger_faceverify;
+    /**
+     * 该考生无采集指纹或指纹异常
+     */
+    private TextView mTvNoZw;
+    private ImageView mIvFaceImageView;
+    /**
+     * 该考生无采集指纹或指纹异常
+     */
+    private TextView mTvFingerVerfiyResult;
+    /**
+     * 该考生无采集人脸照片
+     */
+    private TextView mTvFaceVerfiyResult;
+    /**
+     * 验证通过
+     */
+    private Button mBtRgshTg;
+    /**
+     * 验证不通过
+     */
+    private Button mBtRgshBtg;
     private ImageView mIvKs;
     private FingerData fingerData;
     private Bitmap zwBitmap;
@@ -84,6 +109,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     private final int timeStr = 1111;
     private final int viewStr = 2222;
     private final int visibilityStr = 3333;
+    private AraFaceAuthLib araFaceAuthLib;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -103,6 +129,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     };
+
 
     @Override
     public void setContentView() {
@@ -125,6 +152,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         layout_view_finger = findViewById(R.id.layout_view_finger);
         layout_view_face = findViewById(R.id.layout_view_face);
         layout_view_rz_face = findViewById(R.id.layout_view_rz_face);
+        layout_view_finger_faceverify = findViewById(R.id.layout_view_finger_faceverify);
         include_idcard = findViewById(R.id.include_idcard);
         ll_inputIdCard = findViewById(R.id.ll_inputIdCard);
         mIvKs = findViewById(R.id.ivKs);
@@ -141,6 +169,13 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         rl_camera = findViewById(R.id.rl_camera);
         gvKs = findViewById(R.id.gvKs);
         mRlBcpz = findViewById(R.id.rl_bcpz);
+        mTvNoZw = findViewById(R.id.tvNoZw);
+        mIvFaceImageView = findViewById(R.id.ivFaceImageView);
+        mTvFingerVerfiyResult = findViewById(R.id.tvFingerVerfiyResult);
+        mTvFaceVerfiyResult = findViewById(R.id.tvFaceVerfiyResult);
+        mBtRgshTg = findViewById(R.id.btRgshTg);
+        mBtRgshBtg = findViewById(R.id.btRgshBtg);
+        initFace();
         MyApplication.getApplication().setShouldStopUploadingData(false);
         ccno = DbServices.getInstance(getBaseContext()).selectCC().get(0).getCc_no();
         ccmc = DbServices.getInstance(getBaseContext()).selectCC().get(0).getCc_name();
@@ -157,7 +192,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         }
         mTvTitle.setText(ccmc + " " + kcmc + " " + kmmc);
         mTvCountTotal.setText(DbServices.getInstance(getBaseContext()).queryBKKSList(ksKcList, ccmc).size() + "");
-        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
+        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1) {
             showProgressDialog(RZActivity.this, "正在加载数据...", false);
             handler.postDelayed(runnable, 1000);
             gvKs.setVisibility(View.GONE);
@@ -188,6 +223,8 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         ll_kwdj.setOnClickListener(this);
         ll_inputIdCard.setOnClickListener(this);
         mRlBcpz.setOnClickListener(this);
+        mBtRgshTg.setOnClickListener(this);
+        mBtRgshBtg.setOnClickListener(this);
     }
 
     @Override
@@ -259,6 +296,10 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_bcpz:
                 CS = 0;
                 KsPZ();
+                break;
+            case R.id.btRgshTg:
+                break;
+            case R.id.btRgshBtg:
                 break;
         }
     }
@@ -366,6 +407,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         sfrz_rzjl = null;
         mLlChangeCc.setEnabled(true);
         ll_kwdj.setEnabled(true);
+        layout_view_finger_faceverify.setVisibility(View.GONE);
         layout_view_face.setVisibility(View.GONE);
         layout_view_finger.setVisibility(View.GONE);
         layout_view_rz_face.setVisibility(View.GONE);
@@ -374,11 +416,11 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         state_camera.setVisibility(View.VISIBLE);
         mTvCountVerified.setText(DbServices.getInstance(getBaseContext()).queryBkKsWTG(ksKcList, ccmc, "0") + "");
         mTvCountUnverified.setText(DbServices.getInstance(getBaseContext()).queryBkKsIsTG(ksKcList, ccmc, "0") + "");
-        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
+        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1) {
             layout_view_kslist.setVisibility(View.VISIBLE);
             include_idcard.setVisibility(View.GONE);
             mTvTip.setText("请选择考生");
-        } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1) {
+        } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 2 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 3) {
             layout_view_kslist.setVisibility(View.GONE);
             include_idcard.setVisibility(View.VISIBLE);
             mTvTip.setText("请刷身份证");
@@ -457,58 +499,174 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 int DST_RECT_HEIGHT = b.getHeight();
                 final Bitmap bitmap = Bitmap.createBitmap(b, x, y, DST_RECT_WIDTH, DST_RECT_HEIGHT);
                 CameraInterface.getInstance().rectBitmap = ThumbnailUtils.extractThumbnail(Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight()), 168, 240);
-                new FaceDialog(RZActivity.this, R.style.MyDialogStyle, new FaceDialog.OnCloseListener() {
-                    @Override
-                    public void onClick(Dialog dialog, boolean confirm) {
-                        if (confirm) {
-                            ZpFileName = "sfrz_rzjl/kstz_a_pz/" + rz_ks_zw.get(0).getKs_ksno() + "_" + DateUtil.getNowTime_Millisecond4() + ".jpg";
-                            FileUtils.saveBitmap2(CameraInterface.getInstance().rectBitmap, "sfrz_rzjl/kstz_a_pz/", ZpFileName);
-                            sfrz_rzjg.setRzjg_time(DateUtil.getNowTime());
-                            DbServices.getInstance(getBaseContext()).saveRzjg(sfrz_rzjg);
-                            ShowHintDialog(RZActivity.this, rz_ks_zw.get(0).getKs_xm() + " 验证通过", "提示", R.drawable.img_base_icon_correct, 800, false);
-                            ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
-                                @Override
-                                public Object callback() {
-                                    if (DbServices.getInstance(getBaseContext()).selectBKKS(ccno, rz_ks_zw.get(0).getKs_zjno()).getIsRZ().equals("1") || !Utils.stringIsEmpty(zwid)) {
-                                        return Boolean.valueOf(true);
-                                    } else {
-                                        return Boolean.valueOf(false);
-                                    }
-                                }
-                            }, new ABLSynCallback.ForegroundCall() {
-                                @Override
-                                public void callback(Object obj) {
-                                    if (((Boolean) obj).booleanValue()) {
-                                        if (fingerData != null) {
-                                            byte[] bytes = fingerData.getFingerImage();
-                                            zwBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length); //生成位图
-                                            FileUtils.saveBitmap2(zwBitmap, "sfrz_rzjl/kstz_a_zw/", sfrz_rzjl.getRzjl_pith());
-                                            DbServices.getInstance(getBaseContext()).saveRzjl(sfrz_rzjl);
-                                        }
-                                        DbServices.getInstance(getBaseContext()).saveRzjl("8007", rz_ks_zw.get(0).getKs_ksno(), kmno, kdno, rz_ks_zw.get(0).getKs_kcno(), rz_ks_zw.get(0).getKs_zwh(), Terminal.getSN(), "1", DateUtil.getNowTime(), "", ZpFileName, sfrz_rzjg.getRzjgid(), "0");
-                                    } else {
-                                        DbServices.getInstance(getBaseContext()).saveRzjl("8006", rz_ks_zw.get(0).getKs_ksno(), kmno, kdno, rz_ks_zw.get(0).getKs_kcno(), rz_ks_zw.get(0).getKs_zwh(), Terminal.getSN(), "0", DateUtil.getNowTime(), "", ZpFileName, sfrz_rzjg.getRzjgid(), "0");
-                                    }
-                                    if (sfrz_rzjg.getRzjg_ztid().equals("21")) {
-                                        DbServices.getInstance(getBaseContext()).saveBkKs(kcmcs, ccno, rz_ks_zw.get(0).getKs_zjno());
-                                    } else if (sfrz_rzjg.getRzjg_ztid().equals("22")) {
-                                        DbServices.getInstance(getBaseContext()).saveBkKs3(kcmcs, ccno, rz_ks_zw.get(0).getKs_zjno());
-                                    }
-                                    if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
-                                        updateSingle(ksid);
-                                    }
-                                    xzMS();
-                                }
-                            });
-                            dialog.dismiss();
-                        } else {
-                            dialog.dismiss();
-                        }
-                    }
-                }).setFaceBitmap(CameraInterface.getInstance().rectBitmap).show();
+                if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 2) {
+                    onFaceCamera();
+                } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 3) {
+                    onFaceComparison();
+                }
             }
         }
     };
+
+    private void onFaceCamera() {
+        new FaceDialog(RZActivity.this, R.style.MyDialogStyle, new FaceDialog.OnCloseListener() {
+            @Override
+            public void onClick(Dialog dialog, boolean confirm) {
+                if (confirm) {
+                    ZpFileName = "sfrz_rzjl/kstz_a_pz/" + rz_ks_zw.get(0).getKs_ksno() + "_" + DateUtil.getNowTime_Millisecond4() + ".jpg";
+                    FileUtils.saveBitmap2(CameraInterface.getInstance().rectBitmap, "sfrz_rzjl/kstz_a_pz/", ZpFileName);
+                    sfrz_rzjg.setRzjg_time(DateUtil.getNowTime());
+                    DbServices.getInstance(getBaseContext()).saveRzjg(sfrz_rzjg);
+                    ShowHintDialog(RZActivity.this, rz_ks_zw.get(0).getKs_xm() + " 验证通过", "提示", R.drawable.img_base_icon_correct, 800, false);
+                    ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                        @Override
+                        public Object callback() {
+                            if (DbServices.getInstance(getBaseContext()).selectBKKS(ccno, rz_ks_zw.get(0).getKs_zjno()).getIsRZ().equals("1") || !Utils.stringIsEmpty(zwid)) {
+                                return Boolean.valueOf(true);
+                            } else {
+                                return Boolean.valueOf(false);
+                            }
+                        }
+                    }, new ABLSynCallback.ForegroundCall() {
+                        @Override
+                        public void callback(Object obj) {
+                            if (((Boolean) obj).booleanValue()) {
+                                if (fingerData != null) {
+                                    byte[] bytes = fingerData.getFingerImage();
+                                    zwBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length); //生成位图
+                                    FileUtils.saveBitmap2(zwBitmap, "sfrz_rzjl/kstz_a_zw/", sfrz_rzjl.getRzjl_pith());
+                                    DbServices.getInstance(getBaseContext()).saveRzjl(sfrz_rzjl);
+                                }
+                                DbServices.getInstance(getBaseContext()).saveRzjl("8007", rz_ks_zw.get(0).getKs_ksno(), kmno, kdno, rz_ks_zw.get(0).getKs_kcno(), rz_ks_zw.get(0).getKs_zwh(), Terminal.getSN(), "1", DateUtil.getNowTime(), "", ZpFileName, sfrz_rzjg.getRzjgid(), "0");
+                            } else {
+                                DbServices.getInstance(getBaseContext()).saveRzjl("8006", rz_ks_zw.get(0).getKs_ksno(), kmno, kdno, rz_ks_zw.get(0).getKs_kcno(), rz_ks_zw.get(0).getKs_zwh(), Terminal.getSN(), "0", DateUtil.getNowTime(), "", ZpFileName, sfrz_rzjg.getRzjgid(), "0");
+                            }
+                            if (sfrz_rzjg.getRzjg_ztid().equals("21")) {
+                                DbServices.getInstance(getBaseContext()).saveBkKs(kcmcs, ccno, rz_ks_zw.get(0).getKs_zjno());
+                            } else if (sfrz_rzjg.getRzjg_ztid().equals("22")) {
+                                DbServices.getInstance(getBaseContext()).saveBkKs3(kcmcs, ccno, rz_ks_zw.get(0).getKs_zjno());
+                            }
+                            if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
+                                updateSingle(ksid);
+                            }
+                            xzMS();
+                        }
+                    });
+                    dialog.dismiss();
+                } else {
+                    dialog.dismiss();
+                }
+            }
+        }).setFaceBitmap(CameraInterface.getInstance().rectBitmap).show();
+    }
+
+    private void onFaceComparison() {
+        showProgressDialog(RZActivity.this, "人脸比对中...", false);
+        ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+            @Override
+            public Object callback() {
+                Bitmap bit = FileUtils.getBitmapFromPath(FileUtils.getAppSavePath() + "/" + rz_ks_zw.get(0).getKs_xp());
+                byte[] feature_1 = araFaceAuthLib.getFeature(bit);
+                byte[] feature_2 = araFaceAuthLib.getFeature(CameraInterface.getInstance().rectBitmap);
+                return araFaceAuthLib.verify(feature_1, feature_2);
+            }
+        }, new ABLSynCallback.ForegroundCall() {
+            @Override
+            public void callback(Object obj) {
+                layout_view_finger_faceverify.setVisibility(View.VISIBLE);
+                layout_view_rz_face.setVisibility(View.GONE);
+                ZpFileName = "sfrz_rzjl/kstz_a_pz/" + rz_ks_zw.get(0).getKs_ksno() + "_" + DateUtil.getNowTime_Millisecond4() + ".jpg";
+                FileUtils.saveBitmap2(CameraInterface.getInstance().rectBitmap, "sfrz_rzjl/kstz_a_pz/", ZpFileName);
+                sfrz_rzjg.setRzjg_time(DateUtil.getNowTime());
+                DbServices.getInstance(getBaseContext()).saveRzjg(sfrz_rzjg);
+                if ((int) obj > 0) {
+                    mTvFaceVerfiyResult.setText("比对通过");
+                } else if ((int) obj == 0) {
+                    mTvFaceVerfiyResult.setText("比对不通过");
+                    mTvFaceVerfiyResult.setTextColor(getResources().getColor(R.color.red));
+                } else {
+                    mTvFaceVerfiyResult.setText("比对失败");
+                    mTvFaceVerfiyResult.setTextColor(getResources().getColor(R.color.red));
+                }
+                if (!Utils.stringIsEmpty(zwid)) {
+                    mTvFingerVerfiyResult.setText("通过");
+                } else {
+                    mTvFingerVerfiyResult.setText("不通过");
+                    mTvFingerVerfiyResult.setTextColor(getResources().getColor(R.color.red));
+                }
+                Glide.with(RZActivity.this).load(CameraInterface.getInstance().rectBitmap).into(mIvFaceImageView);
+                ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                    @Override
+                    public Object callback() {
+                        if (DbServices.getInstance(getBaseContext()).selectBKKS(ccno, rz_ks_zw.get(0).getKs_zjno()).getIsRZ().equals("1") || !Utils.stringIsEmpty(zwid)) {
+                            return Boolean.valueOf(true);
+                        } else {
+                            return Boolean.valueOf(false);
+                        }
+                    }
+                }, new ABLSynCallback.ForegroundCall() {
+                    @Override
+                    public void callback(Object obj) {
+                        if (((Boolean) obj).booleanValue()) {
+                            if (fingerData != null) {
+                                byte[] bytes = fingerData.getFingerImage();
+                                zwBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length); //生成位图
+                                FileUtils.saveBitmap2(zwBitmap, "sfrz_rzjl/kstz_a_zw/", sfrz_rzjl.getRzjl_pith());
+                                DbServices.getInstance(getBaseContext()).saveRzjl(sfrz_rzjl);
+                            }
+                            DbServices.getInstance(getBaseContext()).saveRzjl("8007", rz_ks_zw.get(0).getKs_ksno(), kmno, kdno, rz_ks_zw.get(0).getKs_kcno(), rz_ks_zw.get(0).getKs_zwh(), Terminal.getSN(), "1", DateUtil.getNowTime(), "", ZpFileName, sfrz_rzjg.getRzjgid(), "0");
+                        } else {
+                            DbServices.getInstance(getBaseContext()).saveRzjl("8006", rz_ks_zw.get(0).getKs_ksno(), kmno, kdno, rz_ks_zw.get(0).getKs_kcno(), rz_ks_zw.get(0).getKs_zwh(), Terminal.getSN(), "0", DateUtil.getNowTime(), "", ZpFileName, sfrz_rzjg.getRzjgid(), "0");
+                        }
+                        if (sfrz_rzjg.getRzjg_ztid().equals("21")) {
+                            DbServices.getInstance(getBaseContext()).saveBkKs(kcmcs, ccno, rz_ks_zw.get(0).getKs_zjno());
+                        } else if (sfrz_rzjg.getRzjg_ztid().equals("22")) {
+                            DbServices.getInstance(getBaseContext()).saveBkKs3(kcmcs, ccno, rz_ks_zw.get(0).getKs_zjno());
+                        }
+                    }
+                });
+                dismissProgressDialog();
+                mBtRgshTg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
+                            updateSingle(ksid);
+                        }
+                        xzMS();
+                    }
+                });
+
+                mBtRgshBtg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
+                            updateSingle(ksid);
+                        }
+                        xzMS();
+                    }
+                });
+            }
+        });
+    }
+
+    private FaceAuthListeners.StatusListener listener = new FaceAuthListeners.StatusListener() {
+        @Override
+        public void onServiceDisConnected() {
+            araFaceAuthLib.unbind();
+        }
+
+        @Override
+        public void onServiceConnected() {
+            int a = araFaceAuthLib.initFaceEngine(0);
+            Log.i("123", "onServiceConnected: " + a);
+        }
+    };
+
+    public void initFace() {
+        araFaceAuthLib = new AraFaceAuthLib(this);
+        araFaceAuthLib.bind();
+        araFaceAuthLib.setStatusListener(listener);
+    }
 
     private void initViewParams() {
         ViewGroup.LayoutParams params = surfaceView.getLayoutParams();
@@ -584,6 +742,8 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        araFaceAuthLib.cleanListeners();
+        araFaceAuthLib.releaseFaceEngine();
         timeTask.stop();
         handler.removeCallbacks(runnable02);
         handler.removeCallbacks(runnable04);

@@ -84,6 +84,29 @@ public class FileUtils {
         }
     }
 
+
+    public static Bitmap getBitmapFromPath(String path) {
+        if (!new File(path).exists()) {
+            System.err.println("getBitmapFromPath: file not exists");
+            return null;
+        }
+        byte[] buf = new byte[1024 * 1024];// 1M
+        Bitmap bitmap = null;
+        try {
+            FileInputStream fis = new FileInputStream(path);
+            int len = fis.read(buf, 0, buf.length);
+            bitmap = BitmapFactory.decodeByteArray(buf, 0, len);
+            if (bitmap == null) {
+                System.out.println("len= " + len);
+                System.err.println("path: " + path + "  could not be decode!!!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+
     public static void saveBitmap2(Bitmap b, String filePath, String fileName) {
         String path = getSDCardPath() + "/" + DST_FOLDER_NAME + "/" + filePath;
         File file = new File(path);

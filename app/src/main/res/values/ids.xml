@@ -190,6 +190,7 @@
     <item name="layout_view_sfz" type="id" />
     <item name="layout_view_finger" type="id" />
     <item name="layout_view_rz_face" type="id" />
+    <item name="layout_view_finger_faceverify" type="id" />
     <item name="llBottom" type="id" />
     <item name="tvCancel" type="id" />
     <item name="tvComfirm" type="id" />

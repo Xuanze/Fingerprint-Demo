@@ -90,7 +90,6 @@ public abstract class BaseActivity extends FragmentActivity {
         unregisterReceiver(baseReceiver);
         super.onPause();
     }
-
     /**
      * 获取广播数据
      *

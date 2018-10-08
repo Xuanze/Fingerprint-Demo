@@ -28,6 +28,11 @@
             android:layout_weight="1.0"
             android:background="@color/auth_menu_bg" />
 
+        <View
+            android:layout_width="1.0dip"
+            android:layout_height="match_parent"
+            android:background="#60000000" />
+
         <LinearLayout
             android:id="@id/layout_view_kslist"
             android:layout_width="0.0dip"
@@ -70,31 +75,29 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/img_module_tab_auth_queryflow_bg" />
 
-            <LinearLayout
+            <include
                 android:id="@id/layout_view_rz_face"
+                layout="@layout/pad_view_rz_face"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
+                android:background="@drawable/img_module_tab_auth_queryflow_bg"
+                android:visibility="gone" />
 
-                <include
-                    layout="@layout/pad_view_rz_face"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/img_module_tab_auth_queryflow_bg" />
-            </LinearLayout>
+            <include
+                android:id="@id/layout_view_finger_faceverify"
+                layout="@layout/pad_view_finger_faceverify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/img_module_tab_auth_queryflow_bg"
+                android:visibility="gone" />
 
-            <LinearLayout
+            <include
                 android:id="@id/layout_view_finger"
+                layout="@layout/pad_view_rz_finger"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <include
-                    layout="@layout/pad_view_rz_finger"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/img_module_tab_auth_queryflow_bg" />
-            </LinearLayout>
+                android:background="@drawable/img_module_tab_auth_queryflow_bg"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

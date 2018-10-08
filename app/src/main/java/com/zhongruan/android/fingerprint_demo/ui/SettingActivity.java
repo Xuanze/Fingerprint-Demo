@@ -90,7 +90,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
             mTvHyfs.setText("指纹+拍照");
         } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1) {
+            mTvHyfs.setText("指纹+人脸比对");
+        } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 2) {
             mTvHyfs.setText("身份证+指纹+拍照");
+        } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 3) {
+            mTvHyfs.setText("身份证+指纹+人脸比对");
         }
         if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_finger_fz()) == 0) {
             mTvFingerFz.setText("低");
@@ -133,7 +137,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 builder.show();// 让弹出框显示
                 break;
             case R.id.ll_hyfs:
-                final String[] hyArry = new String[]{"指纹+拍照", "身份证+指纹+拍照"};
+                final String[] hyArry = new String[]{"指纹+拍照", "指纹+人脸比对", "身份证+指纹+拍照", "身份证+指纹+人脸比对"};
                 builder = new AlertDialog.Builder(this);// 自定义对话框
                 builder.setSingleChoiceItems(hyArry, Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()), new DialogInterface.OnClickListener() {// 2默认的选中
                     @Override
