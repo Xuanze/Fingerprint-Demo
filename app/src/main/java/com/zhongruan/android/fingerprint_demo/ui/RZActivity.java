@@ -635,7 +635,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                         xzMS();
                     }
                 });
-
                 mBtRgshBtg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
