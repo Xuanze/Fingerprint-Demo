@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 27
@@ -13,14 +14,30 @@ android {
     sourceSets.main {
         jniLibs.srcDirs = ['src/jniLibs']
     }
+    greendao {
+        schemaVersion 1
+        daoPackage 'com.zhongruan.android.fingerprint_demo.db'
+        targetGenDir 'src/main/java'
+    }
     buildTypes {
+
+        debug {
+            //显示日志
+            buildConfigField("boolean", "LOG_DEBUG", "false")
+        }
         release {
             minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
-
+repositories {
+    maven { url "https://jitpack.io" }
+}
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {

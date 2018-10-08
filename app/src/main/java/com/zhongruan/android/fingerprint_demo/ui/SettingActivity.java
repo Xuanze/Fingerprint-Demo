@@ -106,6 +106,11 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_finger_cfcs()) == 2) {
             mTvFingerCfcs.setText("9次");
         }
+        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_finger_bdfw()) == 0) {
+            mTvFingerBdfw.setText("1 : 1");
+        } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_finger_bdfw()) == 1) {
+            mTvFingerBdfw.setText("1 : N");
+        }
     }
 
     @Override
@@ -173,6 +178,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mTvFingerBdfw.setText(bdfwArry[which]);
+                        DbServices.getInstance(getBaseContext()).saveSbZwbdfw(which + "");
                         dialog.dismiss();//随便点击一个item消失对话框，不用点击确认取消
                     }
                 });

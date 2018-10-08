@@ -59,7 +59,7 @@ public class WelcomeActivity extends BaseActivity {
     public void initData() {
         if (Build.MODEL.equals(Utils.DEVICETYPE_YLT1) || Build.MODEL.equals(Utils.DEVICETYPE_YLT2)) {
             if (DbServices.getInstance(getBaseContext()).loadAllrzfs().size() == 0 && DbServices.getInstance(getBaseContext()).loadAllrzzt().size() == 0) {
-                MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Sb_settingDao.TABLENAME + " (settingid,sb_ip,sb_ms,sb_hyfs,sb_finger_fz,sb_finger_cfcs,sb_face_xsd, sb_face_cfcs)   VALUES ('1','192.168.1.1','1','0','0','0','0','0')");
+                MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Sb_settingDao.TABLENAME + " (settingid,sb_ip,sb_ms,sb_hyfs,sb_finger_fz,sb_finger_cfcs,sb_face_xsd,sb_finger_bdfw, sb_face_cfcs)   VALUES ('1','192.168.1.1','1','0','0','0','0','0','0')");
                 MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Sfrz_rzztDao.TABLENAME + " (rzzt_no,rzzt_name)   VALUES ('11','考中补充拍照')");
                 MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Sfrz_rzztDao.TABLENAME + " (rzzt_no,rzzt_name)   VALUES ('13','考中考务登记')");
                 MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("INSERT INTO " + Sfrz_rzztDao.TABLENAME + " (rzzt_no,rzzt_name)   VALUES ('21','现场认证通过')");

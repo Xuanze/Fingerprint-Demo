@@ -437,6 +437,16 @@ public class DbServices {
             LogUtil.i("数据不存在");
         }
     }
+ public void saveSbZwbdfw(String Str) {
+        Sb_setting sbSetting = settingDao.queryBuilder().where(Sb_settingDao.Properties.Settingid.eq(1)).build().unique();
+        if (sbSetting != null) {
+            sbSetting.setSb_finger_bdfw(Str);
+            settingDao.update(sbSetting);
+            LogUtil.i("修改成功");
+        } else {
+            LogUtil.i("数据不存在");
+        }
+    }
 
     public void saveSbFaceCfcs(String Str) {
         Sb_setting sbSetting = settingDao.queryBuilder().where(Sb_settingDao.Properties.Settingid.eq(1)).build().unique();

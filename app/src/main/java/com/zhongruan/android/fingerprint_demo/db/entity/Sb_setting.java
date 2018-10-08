@@ -25,13 +25,15 @@ public class Sb_setting {
     private String sb_finger_cfcs;
     @Property(nameInDb = "sb_face_xsd")
     private String sb_face_xsd;
+    @Property(nameInDb = "sb_finger_bdfw")
+    private String sb_finger_bdfw;
     @Property(nameInDb = "sb_face_cfcs")
     private String sb_face_cfcs;
 
-    @Generated(hash = 1040979699)
+    @Generated(hash = 1271849434)
     public Sb_setting(Long settingid, String sb_ip, String sb_ms, String sb_hyfs,
-                      String sb_finger_fz, String sb_finger_cfcs, String sb_face_xsd,
-                      String sb_face_cfcs) {
+            String sb_finger_fz, String sb_finger_cfcs, String sb_face_xsd,
+            String sb_finger_bdfw, String sb_face_cfcs) {
         this.settingid = settingid;
         this.sb_ip = sb_ip;
         this.sb_ms = sb_ms;
@@ -39,6 +41,7 @@ public class Sb_setting {
         this.sb_finger_fz = sb_finger_fz;
         this.sb_finger_cfcs = sb_finger_cfcs;
         this.sb_face_xsd = sb_face_xsd;
+        this.sb_finger_bdfw = sb_finger_bdfw;
         this.sb_face_cfcs = sb_face_cfcs;
     }
 
@@ -108,5 +111,13 @@ public class Sb_setting {
 
     public void setSb_face_cfcs(String sb_face_cfcs) {
         this.sb_face_cfcs = sb_face_cfcs;
+    }
+
+    public String getSb_finger_bdfw() {
+        return this.sb_finger_bdfw;
+    }
+
+    public void setSb_finger_bdfw(String sb_finger_bdfw) {
+        this.sb_finger_bdfw = sb_finger_bdfw;
     }
 }
