@@ -687,8 +687,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
 
     /**
      * 局部更新GridView
-     *
-     * @param position
      */
     private void updateSingle(int position) {
         /**第一个可见的位置**/
