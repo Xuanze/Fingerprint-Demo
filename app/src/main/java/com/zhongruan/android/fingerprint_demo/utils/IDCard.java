@@ -188,10 +188,4 @@ public class IDCard {
     private static String getBirthDayPart(String idcardnumber) {
         return idcardnumber.substring(6, 14);
     }
-
-    //测试
-    public static void main(String[] args) {
-        System.out.println(validate_effective("431025930428321"));
-        System.out.println(validate_effective("431025930428321", true));
-    }
 }

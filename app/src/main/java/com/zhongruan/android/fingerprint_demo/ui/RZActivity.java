@@ -268,7 +268,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                         if (confirm) {
                             dialog.dismiss();
                             IDCard idCard = new IDCard();
-                            if (idCard.validate_effective(Str.toLowerCase()).equals(Str.toLowerCase())) {
+                            if (idCard.validate_effective(Str.toLowerCase(), false).equals(Str.toLowerCase())) {
                                 bkKs = DbServices.getInstance(getBaseContext()).selectBKKSs(ksKcList, ccno, Str);
                                 if (bkKs != null) {
                                     layout_view_kslist.setVisibility(View.GONE);
