@@ -629,7 +629,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 mBtRgshTg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
+                        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1) {
                             updateSingle(ksid);
                         }
                         xzMS();
@@ -638,7 +638,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 mBtRgshBtg.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0) {
+                        if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1) {
                             updateSingle(ksid);
                         }
                         xzMS();
@@ -697,6 +697,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         if (position >= firstVisiblePosition && position <= lastVisiblePosition) {
             /**获取指定位置view对象**/
             View view = gvKs.getChildAt(position - firstVisiblePosition);
+            bk_ks.get(position).setIsRZ("1");
             LinearLayout linearLayout = view.findViewById(R.id.ll_kslist);
             linearLayout.setBackgroundColor(ContextCompat.getColor(RZActivity.this, R.color.auth_kslist_hasauth));
         }

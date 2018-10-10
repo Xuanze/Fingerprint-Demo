@@ -178,8 +178,24 @@ public class DbServices {
         return rzjgDao.queryBuilder().where(Sfrz_rzjgDao.Properties.Rzjg_kmno.eq(ks_ccDao.queryBuilder().where(Ks_ccDao.Properties.Cc_name.eq(ccmc)).list().get(0).getKm_no()), Sfrz_rzjgDao.Properties.Rzjg_kcno.eq(kcno)).list();
     }
 
+    public List<Sfrz_rzjg> selectKCCCrzjgList(List<Ks_kc> ksKcs, String ks_ccmc) {
+        List<Sfrz_rzjg> rzjgList = new ArrayList<>();
+        for (int i = 0; i < ksKcs.size(); i++) {
+            rzjgList.addAll(rzjgDao.queryBuilder().where(Sfrz_rzjgDao.Properties.Rzjg_kmno.eq(ks_ccDao.queryBuilder().where(Ks_ccDao.Properties.Cc_name.eq(ks_ccmc)).list().get(0).getKm_no()), Sfrz_rzjgDao.Properties.Rzjg_kcno.eq(ksKcs.get(i).getKc_no())).list());
+        }
+        return rzjgList;
+    }
+
     public List<Sfrz_rzjg> selectWSBrzjg(String kcno, String ccmc, String isSB) {
         return rzjgDao.queryBuilder().where(Sfrz_rzjgDao.Properties.Rzjg_kmno.eq(ks_ccDao.queryBuilder().where(Ks_ccDao.Properties.Cc_name.eq(ccmc)).list().get(0).getKm_no()), Sfrz_rzjgDao.Properties.Rzjg_kcno.eq(kcno), Sfrz_rzjgDao.Properties.Rzjg_sb.eq(isSB)).list();
+    }
+
+    public List<Sfrz_rzjg> selectWSBrzjgList(List<Ks_kc> ksKcs, String ks_ccmc, String isSB) {
+        List<Sfrz_rzjg> rzjgList = new ArrayList<>();
+        for (int i = 0; i < ksKcs.size(); i++) {
+            rzjgList.addAll(rzjgDao.queryBuilder().where(Sfrz_rzjgDao.Properties.Rzjg_kmno.eq(ks_ccDao.queryBuilder().where(Ks_ccDao.Properties.Cc_name.eq(ks_ccmc)).list().get(0).getKm_no()), Sfrz_rzjgDao.Properties.Rzjg_kcno.eq(ksKcs.get(i).getKc_no()), Sfrz_rzjgDao.Properties.Rzjg_sb.eq(isSB)).list());
+        }
+        return rzjgList;
     }
 
     public List<Sfrz_rzjg> selectWSBrzjg(String isSB) {
@@ -213,7 +229,6 @@ public class DbServices {
     public List<Bk_ks> queryBKKSList(String ks_kcmc, String ks_ccmc) {
         return bk_ksDao.queryBuilder().where(Bk_ksDao.Properties.Ks_ccmc.eq(ks_ccmc)).where(Bk_ksDao.Properties.Ks_kcmc.eq(ks_kcmc)).orderAsc(Bk_ksDao.Properties.Ks_zwh).list();
     }
-
 
     public List<Bk_ks> queryBKKSList(List<Ks_kc> ks_kcmc, String ks_ccmc) {
         List<Bk_ks> bkKsList = new ArrayList<>();
@@ -293,7 +308,8 @@ public class DbServices {
     public List<Bk_ks_temp> selectDOWNBKKS(String kcno, String ccno) {
         return bk_ks_tempDao.queryBuilder().where(Bk_ks_tempDao.Properties.Kcno.eq(kcno), Bk_ks_tempDao.Properties.Ccno.eq(ccno)).build().list();
     }
- public List<Bk_ks_temp> selectDOWNBKKS(String ccno) {
+
+    public List<Bk_ks_temp> selectDOWNBKKS(String ccno) {
         return bk_ks_tempDao.queryBuilder().where(Bk_ks_tempDao.Properties.Ccno.eq(ccno)).build().list();
     }
 
@@ -437,7 +453,8 @@ public class DbServices {
             LogUtil.i("数据不存在");
         }
     }
- public void saveSbZwbdfw(String Str) {
+
+    public void saveSbZwbdfw(String Str) {
         Sb_setting sbSetting = settingDao.queryBuilder().where(Sb_settingDao.Properties.Settingid.eq(1)).build().unique();
         if (sbSetting != null) {
             sbSetting.setSb_finger_bdfw(Str);

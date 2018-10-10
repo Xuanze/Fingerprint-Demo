@@ -127,6 +127,7 @@ public class KWDJActivity extends BaseActivity implements View.OnClickListener {
             /**获取指定位置view对象**/
             View view = mGvKs.getChildAt(position - firstVisiblePosition);
             LinearLayout linearLayout = view.findViewById(R.id.ll_kslist);
+            bk_ks.get(position).setIsRZ("2");
             linearLayout.setBackgroundColor(ContextCompat.getColor(KWDJActivity.this, R.color.button_wjdj));
         }
     }

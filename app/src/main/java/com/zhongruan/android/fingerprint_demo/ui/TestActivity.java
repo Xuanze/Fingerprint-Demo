@@ -456,8 +456,8 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
 
     private void ChangeText(List<Ks_kc> kcStr, List<Ks_cc> ccStr) {
         if (ccStr.size() > 0) {
-            int rzjg1 = DbServices.getInstance(getBaseContext()).selectWSBrzjg(kcStr.get(0).getKc_no(), ccStr.get(0).getCc_name(), "1").size();
-            int rzjg2 = DbServices.getInstance(TestActivity.this).selectKCCCrzjg(kcStr.get(0).getKc_no(), ccStr.get(0).getCc_name()).size();
+            int rzjg1 = DbServices.getInstance(getBaseContext()).selectWSBrzjgList(kcStr, ccStr.get(0).getCc_name(), "1").size();
+            int rzjg2 = DbServices.getInstance(TestActivity.this).selectKCCCrzjgList(kcStr, ccStr.get(0).getCc_name()).size();
             if (rzjg2 > 0) {
                 upload_app_tv.setText("上传 " + ((int) (100.0d * ((((double) rzjg1) * 1.0d) / (((double) rzjg2) * 1.0d)))) + "%（" + rzjg1 + " / " + rzjg2 + "）");
                 EventBus.getDefault().post(666);
