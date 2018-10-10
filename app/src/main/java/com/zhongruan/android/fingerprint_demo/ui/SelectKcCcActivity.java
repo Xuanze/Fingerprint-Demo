@@ -158,10 +158,15 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
         mGvContent.setAdapter(selectCcAdapter);
         mGvContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, final int i, long l) {
                 selectCcAdapter.choiceSingleState(i);
                 resetCcText();
-                mGvContent.setSelection(i);
+                mGvContent.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mGvContent.setSelection(i / 2);
+                    }
+                });
             }
         });
         mLlButtons.setOnClickListener(new View.OnClickListener() {
