@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -109,6 +110,11 @@ public class IPDialog extends Dialog implements View.OnClickListener {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                String text = editable.toString();
+                int len = editable.toString().length();
+                if (len > 1 && text.startsWith("0")) {
+                    editable.replace(0, 1, "");
+                }
             }
         });
         ip2.addTextChangedListener(new TextWatcher() {
@@ -137,6 +143,11 @@ public class IPDialog extends Dialog implements View.OnClickListener {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                String text = editable.toString();
+                int len = editable.toString().length();
+                if (len > 1 && text.startsWith("0")) {
+                    editable.replace(0, 1, "");
+                }
             }
         });
         ip3.addTextChangedListener(new TextWatcher() {
@@ -165,6 +176,11 @@ public class IPDialog extends Dialog implements View.OnClickListener {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                String text = editable.toString();
+                int len = editable.toString().length();
+                if (len > 1 && text.startsWith("0")) {
+                    editable.replace(0, 1, "");
+                }
             }
         });
         ip4.addTextChangedListener(new TextWatcher() {
@@ -190,6 +206,11 @@ public class IPDialog extends Dialog implements View.OnClickListener {
 
             @Override
             public void afterTextChanged(Editable editable) {
+                String text = editable.toString();
+                int len = editable.toString().length();
+                if (len > 1 && text.startsWith("0")) {
+                    editable.replace(0, 1, "");
+                }
             }
         });
         /**
@@ -198,6 +219,7 @@ public class IPDialog extends Dialog implements View.OnClickListener {
         ip2.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.i("tag", a + "");
                 if (strip2 == null || strip2.isEmpty()) {
                     a--;
                     if (a != 0) {
@@ -210,6 +232,8 @@ public class IPDialog extends Dialog implements View.OnClickListener {
                             a = 2;
                         }
                     }
+                }else {
+                    a = 2;
                 }
                 return false;
             }
@@ -217,6 +241,7 @@ public class IPDialog extends Dialog implements View.OnClickListener {
         ip3.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.i("tag", a + "");
                 if (strip3 == null || strip3.isEmpty()) {
                     a--;
                     if (a != 0) {
@@ -229,6 +254,8 @@ public class IPDialog extends Dialog implements View.OnClickListener {
                             a = 2;
                         }
                     }
+                }else {
+                    a = 2;
                 }
                 return false;
             }
@@ -236,6 +263,7 @@ public class IPDialog extends Dialog implements View.OnClickListener {
         ip4.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
+                Log.i("tag", a + "");
                 if (strip4 == null || strip4.isEmpty()) {
                     a--;
                     if (a != 0) {
@@ -248,6 +276,8 @@ public class IPDialog extends Dialog implements View.OnClickListener {
                             a = 2;
                         }
                     }
+                }else {
+                    a = 2;
                 }
                 return false;
             }
