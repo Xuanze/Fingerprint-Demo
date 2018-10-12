@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
 import com.zhongruan.android.fingerprint_demo.db.DbServices;
@@ -244,6 +245,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             DbServices.getInstance(SettingActivity.this).deleteAllbkks();
             DbServices.getInstance(SettingActivity.this).deleteAllrzjl();
             DbServices.getInstance(SettingActivity.this).deleteAllrzjg();
+            Glide.get(this).clearMemory();
+            Glide.get(this).clearDiskCache();
             return true;
         } else {
             return false;

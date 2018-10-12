@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.adapter.FileBrowserAdapter;
 import com.zhongruan.android.fingerprint_demo.adapter.SelectKcMcAdapter;
@@ -930,6 +931,8 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
             DbServices.getInstance(DataActivity.this).deleteAllbkks();
             DbServices.getInstance(DataActivity.this).deleteAllrzjl();
             DbServices.getInstance(DataActivity.this).deleteAllrzjg();
+            Glide.get(this).clearMemory();
+            Glide.get(this).clearDiskCache();
             return true;
         } else {
             return false;
