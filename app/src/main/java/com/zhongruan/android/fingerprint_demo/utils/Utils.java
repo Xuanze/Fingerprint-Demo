@@ -23,7 +23,7 @@ public class Utils {
     private static final int LEFT_FINGER_LITTLE = 0;
     private static final int LEFT_FINGER_MIDDLE = 2;
     private static final int LEFT_FINGER_THUMB = 4;
-    private static final int MIN_DELAY_TIME = 1000;  // 两次点击间隔不能少于1000ms
+    private static final int MIN_DELAY_TIME = 500;  // 两次点击间隔不能少于1000ms
     private static long lastClickTime;
     private static DecimalFormat fileIntegerFormat = new DecimalFormat("#0");
     private static DecimalFormat fileDecimalFormat = new DecimalFormat("#0.##");

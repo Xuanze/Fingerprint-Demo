@@ -245,7 +245,6 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             DbServices.getInstance(SettingActivity.this).deleteAllbkks();
             DbServices.getInstance(SettingActivity.this).deleteAllrzjl();
             DbServices.getInstance(SettingActivity.this).deleteAllrzjg();
-            Glide.get(this).clearMemory();
             Glide.get(this).clearDiskCache();
             return true;
         } else {

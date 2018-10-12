@@ -931,7 +931,6 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
             DbServices.getInstance(DataActivity.this).deleteAllbkks();
             DbServices.getInstance(DataActivity.this).deleteAllrzjl();
             DbServices.getInstance(DataActivity.this).deleteAllrzjg();
-            Glide.get(this).clearMemory();
             Glide.get(this).clearDiskCache();
             return true;
         } else {
