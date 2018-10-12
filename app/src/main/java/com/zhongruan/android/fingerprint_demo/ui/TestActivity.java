@@ -74,7 +74,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     private final int ipStr = 33333;
     private List<Ks_kc> ksKcList;
     private String kcmc;
-    private final String TAG = "DataActivity";
+    private final String TAG = "TestActivity";
     private Handler checkMessageHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -499,18 +499,20 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             public Object callback() {
                 String kcno = BuildConfig.VERSION_NAME;
                 List<Ks_kc> kcs = DbServices.getInstance(getBaseContext()).selectKC();
-                for (int i = 0; i < kcs.size(); i++) {
-                    String no = kcs.get(i).getKc_no();
-                    if (Utils.stringIsEmpty(kcno)) {
-                        kcno = no;
-                    } else {
-                        kcno = kcno + "&" + no;
+                if (kcs != null) {
+                    for (int i = 0; i < kcs.size(); i++) {
+                        String no = kcs.get(i).getKc_no();
+                        if (Utils.stringIsEmpty(kcno)) {
+                            kcno = no;
+                        } else {
+                            kcno = kcno + "&" + no;
+                        }
                     }
                 }
                 LogUtil.i(TAG, kcno + " | 开始获取考点端消息");
                 client = new SocketClient(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_ip());
                 Map<String, Object> messages = client.receiveUnLockMessage(BuildConfig.VERSION_NAME, kcno);
-                LogUtil.i(kcno + " | 获取到考点端消息：" + messages);
+                LogUtil.i(TAG, kcno + " | 获取到考点端消息：" + messages);
                 client.closeSocket();
                 return messages;
             }

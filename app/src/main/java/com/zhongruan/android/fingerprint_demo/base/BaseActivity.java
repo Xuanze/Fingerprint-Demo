@@ -15,11 +15,13 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.widget.Toast;
 
 import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
+import com.zhongruan.android.fingerprint_demo.utils.Utils;
 
 import java.util.HashMap;
 
@@ -90,6 +92,7 @@ public abstract class BaseActivity extends FragmentActivity {
         unregisterReceiver(baseReceiver);
         super.onPause();
     }
+
     /**
      * 获取广播数据
      *
@@ -193,6 +196,17 @@ public abstract class BaseActivity extends FragmentActivity {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            // 判断连续点击事件时间差
+            if (Utils.isFastClick()) {
+                return true;
+            }
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
     /**

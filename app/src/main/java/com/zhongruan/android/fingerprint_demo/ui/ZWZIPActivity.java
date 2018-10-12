@@ -65,10 +65,8 @@ public class ZWZIPActivity extends BaseActivity {
         button_zip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!Utils.isFastClick()) {
                     button_zip.setEnabled(false);
                     handler.postDelayed(runnable02, 500);// 间隔1秒
-                }
             }
         });
     }

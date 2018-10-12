@@ -1101,7 +1101,6 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                         ll_buttons.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if (!Utils.isFastClick()) {
                                     titleData.setText("数据管理");
                                     mXZksKcList = selectKcMcAdapter.getChosenKcList();
                                     if (mXZksKcList.size() > 0) {
@@ -1114,7 +1113,6 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                         ShowHintDialog(DataActivity.this, "成功导入" + number + "位考生的编排数据", isUSB ? "U盘导入数据" : "网络导入数据", R.drawable.img_base_check, "知道了", false);
                                         MyApplication.getApplication().setShouldStopUploadingData(false);
                                     }
-                                }
                             }
                         });
                     }

@@ -168,6 +168,10 @@
                     android:gravity="center_vertical"
                     android:textSize="20.0sp" />
             </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1.0dip"
+                android:background="#ffdcdcdc" />
 
             <LinearLayout
                 android:id="@id/ll_net_dc"

@@ -28,7 +28,6 @@ import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
 import com.zhongruan.android.fingerprint_demo.dialog.HintDialog2;
 import com.zhongruan.android.fingerprint_demo.utils.ABLSynCallback;
 import com.zhongruan.android.fingerprint_demo.utils.DateUtil;
-import com.zhongruan.android.fingerprint_demo.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +131,6 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
         mLlButtons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!Utils.isFastClick()) {
                     mXZksKcList = selectKcMcAdapter.getChosenKcList();
                     if (mXZksKcList.size() > 0) {
                         MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("UPDATE " + Ks_kcDao.TABLENAME + " SET  kc_extract = 0");
@@ -142,7 +140,6 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
                         }
                         selectCC();
                     }
-                }
             }
         });
     }
@@ -172,7 +169,6 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
         mLlButtons.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!Utils.isFastClick()) {
                     ccList = selectCcAdapter.getChosenCcList();
                     if (ccList.size() > 0) {
                         if (!DateUtil.isTime(DateUtil.dateToLong(DateUtil.getNowTime_Millisecond3()), DateUtil.dateToLong(cc.getCc_kssj()), DateUtil.dateToLong(cc.getCc_jssj()))) {
@@ -242,7 +238,6 @@ public class SelectKcCcActivity extends BaseActivity implements View.OnClickList
                             }
                         }
                     }
-                }
             }
         });
     }
