@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.adapter.FileBrowserAdapter;
 import com.zhongruan.android.fingerprint_demo.adapter.SelectKcMcAdapter;
@@ -931,7 +930,6 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
             DbServices.getInstance(DataActivity.this).deleteAllbkks();
             DbServices.getInstance(DataActivity.this).deleteAllrzjl();
             DbServices.getInstance(DataActivity.this).deleteAllrzjg();
-            Glide.get(this).clearDiskCache();
             return true;
         } else {
             return false;
@@ -1103,18 +1101,18 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                         ll_buttons.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                    titleData.setText("数据管理");
-                                    mXZksKcList = selectKcMcAdapter.getChosenKcList();
-                                    if (mXZksKcList.size() > 0) {
-                                        for (int i = 0; i < mXZksKcList.size(); i++) {
-                                            DbServices.getInstance(getBaseContext()).saveKsKc(mXZksKcList.get(i).getKc_name());
-                                        }
-                                        select_kc_rl.setVisibility(View.GONE);
-                                        data_ll.setVisibility(View.VISIBLE);
-                                        llDataBack.setEnabled(true);
-                                        ShowHintDialog(DataActivity.this, "成功导入" + number + "位考生的编排数据", isUSB ? "U盘导入数据" : "网络导入数据", R.drawable.img_base_check, "知道了", false);
-                                        MyApplication.getApplication().setShouldStopUploadingData(false);
+                                titleData.setText("数据管理");
+                                mXZksKcList = selectKcMcAdapter.getChosenKcList();
+                                if (mXZksKcList.size() > 0) {
+                                    for (int i = 0; i < mXZksKcList.size(); i++) {
+                                        DbServices.getInstance(getBaseContext()).saveKsKc(mXZksKcList.get(i).getKc_name());
                                     }
+                                    select_kc_rl.setVisibility(View.GONE);
+                                    data_ll.setVisibility(View.VISIBLE);
+                                    llDataBack.setEnabled(true);
+                                    ShowHintDialog(DataActivity.this, "成功导入" + number + "位考生的编排数据", isUSB ? "U盘导入数据" : "网络导入数据", R.drawable.img_base_check, "知道了", false);
+                                    MyApplication.getApplication().setShouldStopUploadingData(false);
+                                }
                             }
                         });
                     }
