@@ -474,11 +474,11 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             checkAgain();
             return;
         }
-        if (DbServices.getInstance(getBaseContext()).selectKC().size() > 0 && ConfigApplication.getApplication().getKDConnectState()) {
+        if (DbServices.getInstance(getBaseContext()).selectKC().size() > 0) {
             kc = DbServices.getInstance(getBaseContext()).selectKC();
             cc = DbServices.getInstance(getBaseContext()).selectCC();
             ChangeText(kc, cc);
-            if (DbServices.getInstance(TestActivity.this).loadAllrzjg().size() > 0 || DbServices.getInstance(TestActivity.this).loadAllrzjl().size() > 0) {
+            if (DbServices.getInstance(TestActivity.this).loadAllrzjg().size() > 0 || DbServices.getInstance(TestActivity.this).loadAllrzjl().size() > 0 && ConfigApplication.getApplication().getKDConnectState()) {
                 List<Sfrz_rzjg> rzjgList = DbServices.getInstance(getBaseContext()).selectWSBrzjg("0");
                 List<Sfrz_rzjl> rzjlList = DbServices.getInstance(getBaseContext()).selectWSBrzjl("0");
                 if (rzjgList.size() > 0) {

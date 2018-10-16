@@ -1020,12 +1020,11 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                 if (tabName == "bk_ksxp") {
                                     lines = (line.replaceAll("\\\\", "/")).replaceAll("//", "/").replaceAll(",", "','");
                                     number++;
-                                    LogUtil.i("bk_ksxp:" + lines);
                                 } else {
                                     lines = line.replaceAll(",", "','");
                                 }
                                 LogUtil.i("正在导入考生编排信息");
-                                LogUtil.i(lines.toString());
+                                LogUtil.i(TAG, "整行提取txt信息" + lines);
                                 Message message11 = new Message();
                                 message11.what = mag;
                                 message11.arg2 = numbers;
