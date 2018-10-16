@@ -94,10 +94,9 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
     private int progressSize, number = 0;
     private boolean isUSB = true;
     private List<Ks_kc> ksKcList;
-    private Ks_kc kc;
     private int isReceive;
     private File zipFile, cjFile;
-    private boolean isWC1, isWC2, isWC3 = false;
+    private boolean isWC1, isWC2, isWC3, isCG = false;
     private List<Sfrz_rzjl> listRzjl;
     private List<Sfrz_rzjg> listRzjg;
     private List<Bk_ks_temp> bkKsTempList;
@@ -284,6 +283,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                     public void onClick(Dialog dialog, boolean confirm) {
                         if (confirm) {
                             dialog.dismiss();
+                            isCG = false;
                             isError = false;
                             if (Utils.checkUSBInserted()) {
                                 initMap();
@@ -340,6 +340,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                     public void onClick(Dialog dialog, boolean confirm) {
                         if (confirm) {
                             dialog.dismiss();
+                            isCG = false;
                             if (ConfigApplication.getApplication().getKDConnectState()) {
                                 initMap();
                                 MyApplication.getApplication().setShouldStopUploadingData(true);
@@ -989,8 +990,11 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                         importXX();
                     }
                 } else {
-                    multiProgressDialog.dismiss();
-                    ShowHintDialog(DataActivity.this, "考生编排信息导入失败", "U盘导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                    if (!isCG) {
+                        isCG = true;
+                        multiProgressDialog.dismiss();
+                        ShowHintDialog(DataActivity.this, "考生编排信息导入失败", "U盘导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                    }
                 }
             }
         });
