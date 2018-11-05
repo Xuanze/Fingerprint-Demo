@@ -110,25 +110,104 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     private final int viewStr = 2222;
     private final int visibilityStr = 3333;
     private AraFaceAuthLib araFaceAuthLib;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case timeStr:
-                    mTvTime.setText(DateUtil.getNowTimeNoDate());
-                    mTvDate.setText(DateUtil.getDateByFormat("yyyy年MM月dd日"));
-                    break;
-                case viewStr:
-                    initViewParams();
-                    break;
-                case visibilityStr:
-                    state_camera.setVisibility(View.GONE);
-                    rl_camera.setVisibility(View.VISIBLE);
-                    break;
+    private Runnable FingerThread, IDCardThread;
+    private Handler handler;
+
+    public RZActivity() {
+        handler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    case timeStr:
+                        mTvTime.setText(DateUtil.getNowTimeNoDate());
+                        mTvDate.setText(DateUtil.getDateByFormat("yyyy年MM月dd日"));
+                        break;
+                    case viewStr:
+                        initViewParams();
+                        break;
+                    case visibilityStr:
+                        state_camera.setVisibility(View.GONE);
+                        rl_camera.setVisibility(View.VISIBLE);
+                        break;
+                }
             }
-        }
-    };
+        };
+        /**
+         * 指纹认证
+         */
+        FingerThread = new Runnable() {
+            public void run() {
+                fingerData = MyApplication.getYltFingerEngine().fingerCollect();
+                if (fingerData != null) {
+                    ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                        @Override
+                        public Object callback() {
+                            CS++;
+                            soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
+                            return MyApplication.getYltFingerEngine().fingerSearch(fingerData.getFingerFeatures());
+                        }
+                    }, new ABLSynCallback.ForegroundCall() {
+                        @Override
+                        public void callback(Object obj) {
+                            zwid = (String) obj;
+                            if (Utils.stringIsEmpty(zwid) && CS != 3) {
+                                zwid = "";
+                                fingerData = null;
+                                handler.postDelayed(FingerThread, 500);// 间隔1秒
+                            } else {
+                                CS = 0;
+                                LogUtil.i(zwid);
+                                KsPZ();
+                            }
+                        }
+                    });
+                } else {
+                    handler.postDelayed(FingerThread, 500);// 间隔1秒
+                }
+            }
+        };
+
+        /**
+         * 身份证信息采集
+         */
+
+        IDCardThread = new Runnable() {
+            public void run() {
+                idCardData = MyApplication.getYltIdCardEngine().startScanIdCard();
+                if (idCardData != null) {
+                    ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
+                        @Override
+                        public Object callback() {
+                            soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
+                            return DbServices.getInstance(getBaseContext()).selectBKKSs(ksKcList, ccno, idCardData.getSfzh());
+                        }
+                    }, new ABLSynCallback.ForegroundCall() {
+                        @Override
+                        public void callback(Object obj) {
+                            bkKs = (Bk_ks) obj;
+                            if (bkKs != null) {
+                                layout_view_kslist.setVisibility(View.GONE);
+                                layout_view_rz_face.setVisibility(View.GONE);
+                                layout_view_face.setVisibility(View.VISIBLE);
+                                layout_view_finger.setVisibility(View.VISIBLE);
+                                include_idcard.setVisibility(View.GONE);
+                                rz_ks_zw = DbServices.getInstance(getBaseContext()).selectBkKs(bkKs.getKs_zjno());
+                                fingerData = null;
+                                handler.removeCallbacks(IDCardThread); //停止刷新
+                                KsZW();
+                            } else {
+                                ShowToast("未查找到" + idCardData.getSfzh() + "，请重试");
+                                handler.postDelayed(IDCardThread, 100);// 间隔1秒
+                            }
+                        }
+                    });
+                } else {
+                    handler.postDelayed(IDCardThread, 500);// 间隔1秒
+                }
+            }
+        };
+    }
 
 
     @Override
@@ -194,8 +273,14 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         mTvCountTotal.setText(DbServices.getInstance(getBaseContext()).queryBKKSList(ksKcList, ccmc).size() + "");
         if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 0 || Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_hyfs()) == 1) {
             showProgressDialog(RZActivity.this, "正在加载数据...", false);
-            handler.postDelayed(runnable, 1000);
             gvKs.setVisibility(View.GONE);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    gvKs.setVisibility(View.VISIBLE);
+                    dismissProgressDialog();
+                }
+            }, 500);
             bk_ks = DbServices.getInstance(getBaseContext()).queryBKKSList(ksKcList, ccmc);
             selectKsAdapter = new SelectKsAdapter(this, bk_ks);
             gvKs.setAdapter(selectKsAdapter);
@@ -261,7 +346,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.ll_inputIdCard:
                 idCardData = null;
-                handler.removeCallbacks(runnable04); //停止刷新
+                handler.removeCallbacks(IDCardThread); //停止刷新
                 new SfzhEditDialog(RZActivity.this, R.style.dialog, new SfzhEditDialog.OnCloseListener() {
                     @Override
                     public void onClick(Dialog dialog, boolean confirm, String Str) {
@@ -281,14 +366,14 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                                     KsZW();
                                 } else {
                                     ShowToast("未查找到" + Str + "，请重试");
-                                    handler.postDelayed(runnable04, 100);// 间隔1秒
+                                    handler.postDelayed(IDCardThread, 100);// 间隔1秒
                                 }
                             } else {
                                 ShowToast("输入身份证号有误！");
                             }
                         } else {
                             dialog.dismiss();
-                            handler.postDelayed(runnable04, 100);
+                            handler.postDelayed(IDCardThread, 100);
                         }
                     }
                 }).show();
@@ -296,10 +381,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_bcpz:
                 CS = 0;
                 KsPZ();
-                break;
-            case R.id.btRgshTg:
-                break;
-            case R.id.btRgshBtg:
                 break;
         }
     }
@@ -312,91 +393,10 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void run() {
                 handler.sendEmptyMessage(timeStr);
-                //或者发广播，启动服务都是可以的
             }
         });
         timeTask.start();
     }
-
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            gvKs.setVisibility(View.VISIBLE);
-            dismissProgressDialog();
-        }
-    };
-    /**
-     * 指纹认证
-     */
-    private Runnable runnable02 = new Runnable() {
-        public void run() {
-            fingerData = MyApplication.getYltFingerEngine().fingerCollect();
-            if (fingerData != null) {
-                ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
-                    @Override
-                    public Object callback() {
-                        CS++;
-                        soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
-                        return MyApplication.getYltFingerEngine().fingerSearch(fingerData.getFingerFeatures());
-                    }
-                }, new ABLSynCallback.ForegroundCall() {
-                    @Override
-                    public void callback(Object obj) {
-                        zwid = (String) obj;
-                        if (Utils.stringIsEmpty(zwid) && CS != 3) {
-                            zwid = "";
-                            fingerData = null;
-                            handler.postDelayed(runnable02, 500);// 间隔1秒
-                        } else {
-                            CS = 0;
-                            LogUtil.i(zwid);
-                            KsPZ();
-                        }
-                    }
-                });
-            } else {
-                handler.postDelayed(runnable02, 500);// 间隔1秒
-            }
-        }
-    };
-    /**
-     * 身份证信息采集
-     */
-    private Runnable runnable04 = new Runnable() {
-        public void run() {
-            idCardData = MyApplication.getYltIdCardEngine().startScanIdCard();
-            if (idCardData != null) {
-                ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
-                    @Override
-                    public Object callback() {
-                        soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
-                        return DbServices.getInstance(getBaseContext()).selectBKKSs(ksKcList, ccno, idCardData.getSfzh());
-                    }
-                }, new ABLSynCallback.ForegroundCall() {
-                    @Override
-                    public void callback(Object obj) {
-                        bkKs = (Bk_ks) obj;
-                        if (bkKs != null) {
-                            layout_view_kslist.setVisibility(View.GONE);
-                            layout_view_rz_face.setVisibility(View.GONE);
-                            layout_view_face.setVisibility(View.VISIBLE);
-                            layout_view_finger.setVisibility(View.VISIBLE);
-                            include_idcard.setVisibility(View.GONE);
-                            rz_ks_zw = DbServices.getInstance(getBaseContext()).selectBkKs(bkKs.getKs_zjno());
-                            fingerData = null;
-                            handler.removeCallbacks(runnable04); //停止刷新
-                            KsZW();
-                        } else {
-                            ShowToast("未查找到" + idCardData.getSfzh() + "，请重试");
-                            handler.postDelayed(runnable04, 100);// 间隔1秒
-                        }
-                    }
-                });
-            } else {
-                handler.postDelayed(runnable04, 500);// 间隔1秒
-            }
-        }
-    };
 
     private void xzMS() {
         zwid = "";
@@ -412,7 +412,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         layout_view_finger.setVisibility(View.GONE);
         layout_view_rz_face.setVisibility(View.GONE);
         rl_camera.setVisibility(View.GONE);
-        handler.removeCallbacks(runnable02);
+        handler.removeCallbacks(FingerThread);
         state_camera.setVisibility(View.VISIBLE);
         mTvCountVerified.setText(DbServices.getInstance(getBaseContext()).queryBkKsWTG(ksKcList, ccmc, "0") + "");
         mTvCountUnverified.setText(DbServices.getInstance(getBaseContext()).queryBkKsIsTG(ksKcList, ccmc, "0") + "");
@@ -425,7 +425,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             include_idcard.setVisibility(View.VISIBLE);
             mTvTip.setText("请刷身份证");
             soundPool.play(musicId.get(3), 1, 1, 0, 0, 1);
-            handler.post(runnable04);
+            handler.post(IDCardThread);
         }
     }
 
@@ -449,11 +449,11 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         }
         mTvTip.setText("请按手指");
         soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
-        handler.post(runnable02);
+        handler.post(FingerThread);
     }
 
     private void KsPZ() {
-        handler.removeCallbacks(runnable02); //停止刷新
+        handler.removeCallbacks(FingerThread); //停止刷新
         layout_view_rz_face.setVisibility(View.VISIBLE);
         layout_view_finger.setVisibility(View.GONE);
         if (!Utils.stringIsEmpty(zwid)) {
@@ -743,8 +743,8 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         araFaceAuthLib.cleanListeners();
         araFaceAuthLib.releaseFaceEngine();
         timeTask.stop();
-        handler.removeCallbacks(runnable02);
-        handler.removeCallbacks(runnable04);
+        handler.removeCallbacks(FingerThread);
+        handler.removeCallbacks(IDCardThread);
         handler = null;
         fingerData = null;
         CameraInterface.getInstance().doStopCamera();

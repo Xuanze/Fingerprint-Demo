@@ -82,13 +82,13 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     startCheckMeesageFromKD();
                     break;
                 case timeStr:
+                    localipTv.setText(ConfigApplication.getApplication().getDeviceIP());
                     tvConnectState.setText(ConfigApplication.getApplication().getKDConnectState() ? "已连接校端" : "未连接校端");
                     imgConnectState.setBackgroundResource(ConfigApplication.getApplication().getKDConnectState() ? R.drawable.img_module_tab_footer_base_icon_connect : R.drawable.img_module_tab_footer_base_icon_disconnect);
                     break;
                 case ipStr:
                     nowtimeTv.setText(DateUtil.getNowTimeNoDate());
                     nowdayTv.setText(DateUtil.getDateByFormat("yyyy年MM月dd日"));
-                    localipTv.setText(ConfigApplication.getApplication().getDeviceIP());
                     break;
             }
         }
@@ -127,6 +127,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         mTvCc = findViewById(R.id.tv_cc);
         mTvTs = findViewById(R.id.tv_ts);
         intent = new Intent(this, MyService.class);
+        localipTv.setText(ConfigApplication.getApplication().getDeviceIP());
     }
 
     @Override
@@ -157,7 +158,6 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             @Override
             public void run() {
                 checkMessageHandler.sendEmptyMessage(ipStr);
-                //或者发广播，启动服务都是可以的
             }
         });
         timeTask.start();
@@ -573,7 +573,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     DbServices.getInstance(TestActivity.this).saveRZJG(rzjg.getRzjg_time());
                     ChangeText(kc, cc);
                 } else {
-                    if (ConfigApplication.getApplication().getKDConnectState()) {
+                    if (!ConfigApplication.getApplication().getKDConnectState()) {
                         return;
                     } else {
                         uploadRzjg(rzjg);
@@ -605,7 +605,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                 if (((Boolean) obj).booleanValue()) {
                     DbServices.getInstance(TestActivity.this).saveRZJL(rzjl.getRzjl_time());
                 } else {
-                    if (ConfigApplication.getApplication().getKDConnectState()) {
+                    if (!ConfigApplication.getApplication().getKDConnectState()) {
                         return;
                     } else {
                         uploadRzjl(rzjl);
