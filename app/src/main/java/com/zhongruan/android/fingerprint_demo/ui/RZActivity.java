@@ -150,9 +150,10 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                         @Override
                         public void callback(Object obj) {
                             zwid = (String) obj;
-                            if (Utils.stringIsEmpty(zwid) && CS != 3) {
+                            if (Utils.stringIsEmpty(zwid) && CS != ((Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_finger_cfcs()) == 0 ? 3 : 6))) {
                                 zwid = "";
                                 fingerData = null;
+                                ShowToast("认证失败，请重试");
                                 handler.postDelayed(FingerThread, 500);// 间隔1秒
                             } else {
                                 CS = 0;
@@ -253,6 +254,26 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         mTvFaceVerfiyResult = findViewById(R.id.tvFaceVerfiyResult);
         mBtRgshTg = findViewById(R.id.btRgshTg);
         mBtRgshBtg = findViewById(R.id.btRgshBtg);
+
+    }
+
+    @Override
+    public void initListeners() {
+        mLlBack.setOnClickListener(this);
+        mLlChangeCc.setOnClickListener(this);
+        llPhoto.setOnClickListener(this);
+        llSwitch.setOnClickListener(this);
+        ll_kwdj.setOnClickListener(this);
+        ll_inputIdCard.setOnClickListener(this);
+        mRlBcpz.setOnClickListener(this);
+        mBtRgshTg.setOnClickListener(this);
+        mBtRgshBtg.setOnClickListener(this);
+    }
+
+    @Override
+    public void initData() {
+        mTvTitle.setSelected(true);
+        setTimer();
         initFace();
         MyApplication.getApplication().setShouldStopUploadingData(false);
         ccno = DbServices.getInstance(getBaseContext()).selectCC().get(0).getCc_no();
@@ -296,25 +317,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             });
         }
         xzMS();
-    }
-
-    @Override
-    public void initListeners() {
-        mLlBack.setOnClickListener(this);
-        mLlChangeCc.setOnClickListener(this);
-        llPhoto.setOnClickListener(this);
-        llSwitch.setOnClickListener(this);
-        ll_kwdj.setOnClickListener(this);
-        ll_inputIdCard.setOnClickListener(this);
-        mRlBcpz.setOnClickListener(this);
-        mBtRgshTg.setOnClickListener(this);
-        mBtRgshBtg.setOnClickListener(this);
-    }
-
-    @Override
-    public void initData() {
-        mTvTitle.setSelected(true);
-        setTimer();
     }
 
     @Override

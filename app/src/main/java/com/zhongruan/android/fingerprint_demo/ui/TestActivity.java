@@ -2,8 +2,11 @@ package com.zhongruan.android.fingerprint_demo.ui;
 
 import android.app.AlarmManager;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -27,6 +30,7 @@ import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
 import com.zhongruan.android.fingerprint_demo.dialog.HintDialog2;
 import com.zhongruan.android.fingerprint_demo.dialog.IPDialog;
 import com.zhongruan.android.fingerprint_demo.dialog.JiuGonggeDialog;
+import com.zhongruan.android.fingerprint_demo.service.MyService;
 import com.zhongruan.android.fingerprint_demo.socket.SocketClient;
 import com.zhongruan.android.fingerprint_demo.utils.ABLSynCallback;
 import com.zhongruan.android.fingerprint_demo.utils.DateUtil;
@@ -53,7 +57,7 @@ import rx.android.BuildConfig;
  * Created by Administrator on 2017/8/1.
  */
 public class TestActivity extends BaseActivity implements View.OnClickListener {
-    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfrz, linearlayoutKwdj, linearlayoutSfcj, linearlayoutCjjl, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz;
+    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfrz, linearlayoutKwdj, linearlayoutSfcj, ll_test_cqqd,linearlayoutCjjl, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz;
     private TextView nowtimeTv, nowdayTv, localipTv, tvConnectState, netipTv, upload_app_tv, version_app_tv, mTvKd, mTvKc, mTvCc, mTvTs;
     private ImageView imgConnectState;
     private SocketClient client;
@@ -63,6 +67,9 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     private MyTimeTask timeTask;
     private List<Ks_kc> ksKcList;
     private String kcmc;
+    private MyReceiver myReceiver;
+    private Intent intent;
+    private boolean isRegister = false;
     private final String TAG = "TestActivity";
     private Handler checkMessageHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -106,6 +113,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         linearlayoutKwdj = findViewById(R.id.linearlayout_kwdj);
         linearlayoutRzjl = findViewById(R.id.linearlayout_rzjl);
         linearlayoutSjgl = findViewById(R.id.linearlayout_sjgl);
+        ll_test_cqqd = findViewById(R.id.ll_test_cqqd);
         ll_test_xqkc = findViewById(R.id.ll_test_xqkc);
         ll_test_jcsz = findViewById(R.id.ll_test_jcsz);
         version_app_tv = findViewById(R.id.version_app_tv);
@@ -115,6 +123,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         mTvCc = findViewById(R.id.tv_cc);
         mTvTs = findViewById(R.id.tv_ts);
         localipTv.setText(ConfigApplication.getApplication().getDeviceIP());
+        intent = new Intent(this, MyService.class);
     }
 
     @Override
@@ -128,6 +137,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         linearlayoutKwdj.setOnClickListener(this);
         linearlayoutRzjl.setOnClickListener(this);
         linearlayoutSjgl.setOnClickListener(this);
+        ll_test_cqqd.setOnClickListener(this);
         ll_test_xqkc.setOnClickListener(this);
         ll_test_jcsz.setOnClickListener(this);
     }
@@ -386,6 +396,32 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             case R.id.ll_nowtime:
                 startActivity(new Intent(this, TimeActivity.class));
                 break;
+            case R.id.ll_test_cqqd:
+                new HintDialog(this, R.style.dialog, "是否需要重启驱动模块？", new HintDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        if (confirm) {
+                            MyApplication.getYltFingerEngine().freeEngine();
+                            MyApplication.getYltIdCardEngine().freeEngine();
+                            stopService(intent);
+                            dialog.dismiss();
+                            showProgressDialog(TestActivity.this, "正在重启驱动模块，请稍后...", false);
+                            //启动服务
+                            startService(new Intent(TestActivity.this, MyService.class));
+                            //注册广播接收器
+                            if (!isRegister) {
+                                myReceiver = new MyReceiver();
+                                IntentFilter filter = new IntentFilter();
+                                filter.addAction("MyService");
+                                TestActivity.this.registerReceiver(myReceiver, filter);
+                                isRegister = true;
+                            }
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("提示").setPositiveButton("是").setNegativeButton("否").show();
+                break;
         }
     }
 
@@ -564,6 +600,26 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
+    /**
+     * 获取广播数据
+     *
+     * @author jiqinlin
+     */
+    public class MyReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            int a = bundle.getInt("a");
+            int b = bundle.getInt("b");
+            LogUtil.i("123", "a:   " + a + "   b:   " + b);
+            if (a == 1 && b == 1) {
+                dismissProgressDialog();
+                ShowHintDialog(context, "重启驱动模块完成", "提示", R.drawable.img_base_icon_correct, "知道了", false);
+
+            }
+        }
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -633,6 +689,10 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         super.onDestroy();
         timeTask.stop();
         checkMessageHandler.removeMessages(ABLConfig.TEST_SOCKET);
+        checkMessageHandler.removeMessages(ABLConfig.TEST_IP);
         ConfigApplication.getApplication().setKDConnectState(false);
+        MyApplication.getYltFingerEngine().freeEngine();
+        MyApplication.getYltIdCardEngine().freeEngine();
+        stopService(intent);
     }
 }
