@@ -23,6 +23,7 @@ import java.util.List;
 
 import cn.com.aratek.dev.Terminal;
 
+
 /**
  * 考务登记
  * Created by Administrator on 2017/8/11.
@@ -139,5 +140,12 @@ public class KWDJActivity extends BaseActivity implements View.OnClickListener {
                 finish();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnable);
+        handler = null;
     }
 }

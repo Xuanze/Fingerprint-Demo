@@ -71,6 +71,7 @@ import static com.zhongruan.android.fingerprint_demo.utils.FileUtils.getAppSaveP
 import static com.zhongruan.android.fingerprint_demo.utils.Utils.getUSBPath;
 import static com.zhongruan.android.fingerprint_demo.utils.Utils.stringIsEmpty;
 
+
 /**
  * 数据管理
  * Created by Administrator on 2017/8/15.
@@ -380,6 +381,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                                             LogUtil.i("tempList", array[0]);
                                             NewFile = StringUtils.substringAfterLast(array[0].getPath(), "/");
                                             NewFilePath = StringUtils.substringBeforeLast(NewFile, ".");
+                                            LogUtil.i("网络下载数据解压", "array[0].getPath():" + array[0].getPath() + " StringUtils.substringBeforeLast():" + StringUtils.substringBeforeLast(array[0].getPath(), "."));
                                             unZipFile(array[0].getPath(), StringUtils.substringBeforeLast(array[0].getPath(), "."), "mst");
                                         } else if ((int) obj == 0) {
                                             dismissProgressDialog();

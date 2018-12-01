@@ -30,6 +30,7 @@ import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
 import com.zhongruan.android.fingerprint_demo.camera.CameraInterface;
 import com.zhongruan.android.fingerprint_demo.camera.CameraSurfaceView;
 import com.zhongruan.android.fingerprint_demo.camera.util.DisplayUtil;
+import com.zhongruan.android.fingerprint_demo.config.ABLConfig;
 import com.zhongruan.android.fingerprint_demo.db.DbServices;
 import com.zhongruan.android.fingerprint_demo.db.entity.Bk_ks;
 import com.zhongruan.android.fingerprint_demo.db.entity.Ks_kc;
@@ -37,6 +38,7 @@ import com.zhongruan.android.fingerprint_demo.db.entity.Rz_ks_zw;
 import com.zhongruan.android.fingerprint_demo.db.entity.Sfrz_rzjg;
 import com.zhongruan.android.fingerprint_demo.db.entity.Sfrz_rzjl;
 import com.zhongruan.android.fingerprint_demo.dialog.FaceDialog;
+import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
 import com.zhongruan.android.fingerprint_demo.dialog.SfzhEditDialog;
 import com.zhongruan.android.fingerprint_demo.fingerprintengine.FingerData;
 import com.zhongruan.android.fingerprint_demo.idcardengine.IDCardData;
@@ -106,9 +108,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     private int ksid;
     private RelativeLayout mRlBcpz;
     private MyTimeTask timeTask;
-    private final int timeStr = 1111;
-    private final int viewStr = 2222;
-    private final int visibilityStr = 3333;
     private AraFaceAuthLib araFaceAuthLib;
     private Runnable FingerThread, IDCardThread;
     private Handler handler;
@@ -119,14 +118,14 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case timeStr:
+                    case ABLConfig.RZ_TIME:
                         mTvTime.setText(DateUtil.getNowTimeNoDate());
                         mTvDate.setText(DateUtil.getDateByFormat("yyyy年MM月dd日"));
                         break;
-                    case viewStr:
+                    case ABLConfig.RZ_VIEW:
                         initViewParams();
                         break;
-                    case visibilityStr:
+                    case ABLConfig.RZ_VISIBILITY:
                         state_camera.setVisibility(View.GONE);
                         rl_camera.setVisibility(View.VISIBLE);
                         break;
@@ -329,10 +328,19 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 }
                 break;
             case R.id.ll_change_cc:
-                Intent intent = new Intent(this, SelectKcCcActivity.class);
-                intent.putExtra("sfrz", "1");
-                startActivity(intent);
-                finish();
+                new HintDialog(this, R.style.dialog, "是否切换场次？", new HintDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        if (confirm) {
+                            Intent intent = new Intent(RZActivity.this, SelectKcCcActivity.class);
+                            intent.putExtra(ABLConfig.TEST_SFRZ, ABLConfig.TEST_SFRZ_RZ);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("提示").setPositiveButton("是").setNegativeButton("否").show();
                 break;
             case R.id.llPhoto:
                 doTakePicture();
@@ -341,8 +349,18 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 CameraInterface.getInstance().cameraSwitch(surfaceView);
                 break;
             case R.id.ll_kwdj:
-                startActivity(new Intent(this, KWDJActivity.class));
-                finish();
+                new HintDialog(this, R.style.dialog, "是进行考务登记？", new HintDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, boolean confirm) {
+                        if (confirm) {
+                            startActivity(new Intent(RZActivity.this, KWDJActivity.class));
+                            dialog.dismiss();
+                            finish();
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("提示").setPositiveButton("是").setNegativeButton("否").show();
                 break;
             case R.id.ll_inputIdCard:
                 idCardData = null;
@@ -392,7 +410,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         timeTask = new MyTimeTask(1000, new TimerTask() {
             @Override
             public void run() {
-                handler.sendEmptyMessage(timeStr);
+                handler.sendEmptyMessage(ABLConfig.RZ_TIME);
             }
         });
         timeTask.start();
@@ -468,8 +486,8 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         }
         mTvTip.setText("请拍照");
         soundPool.play(musicId.get(4), 1, 1, 0, 0, 1);
-        handler.sendEmptyMessage(viewStr);
-        handler.sendEmptyMessageDelayed(visibilityStr, 1000);
+        handler.sendEmptyMessage(ABLConfig.RZ_VIEW);
+        handler.sendEmptyMessageDelayed(ABLConfig.RZ_VISIBILITY, 1000);
     }
 
     /**

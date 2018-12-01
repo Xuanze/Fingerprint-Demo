@@ -12,9 +12,6 @@ import com.zhongruan.android.fingerprint_demo.db.entity.Bk_ks_cjxx;
 
 import java.util.List;
 
-/**
- * Created by castl on 2016/5/20.
- */
 public class QuickAdapter extends BaseQuickAdapter<Bk_ks_cjxx> {
     public QuickAdapter(Context context, List<Bk_ks_cjxx> data) {
         super(context, R.layout.pad_adapter_cjxx_item, data);

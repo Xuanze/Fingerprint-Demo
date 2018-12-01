@@ -31,4 +31,23 @@ public class ABLConfig {
     public static final String BUNDLE_KEY_DOWNLOAD_NAME = "download_name";
     public static final String BUNDLE_KEY_DOWNLOAD_TYPE = "download_type";
     public static final int SYNTAX_ERROR = 500;
+
+    public static final int TEST_SOCKET = 101;
+    public static final int TEST_TIME = 102;
+    public static final int TEST_IP = 103;
+    public static final String TEST_SFRZ = "TEST_SFRZ";
+    public static final String TEST_SFRZ_RZ = "TEST_SFRZ_RZ";
+    public static final String TEST_SFRZ_RZJL = "TEST_SFRZ_RZJL";
+    public static final String TEST_SFRZ_KWDJ = "TEST_SFRZ_KWDJ";
+    public static final String TEST_SFRZ_KCMC = "TEST_SFRZ_KCMC";
+    public static final int RZ_TIME = 201;
+    public static final int RZ_VIEW = 202;
+    public static final int RZ_VISIBILITY = 203;
+    public static final int RZ_FINGER_SOUND = 204;
+    public static final int RZ_IDCARD_SOUND = 205;
+    public static final int RZ_CAMERA_SOUND = 206;
+
+    public static final String RZDJJL_KC = "RZDJJL_KC";
+    public static final String RZDJJL_CC = "RZDJJL_CC";
+
 }

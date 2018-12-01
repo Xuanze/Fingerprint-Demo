@@ -2,6 +2,7 @@ package com.zhongruan.android.fingerprint_demo.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -83,7 +84,6 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
-
 
     public static Bitmap getBitmapFromPath(String path) {
         if (!new File(path).exists()) {
@@ -405,67 +405,23 @@ public class FileUtils {
         return false;
     }
 
-    /**
-     * 递归删除目录下的所有文件及子目录下所有文件
-     *
-     * @param dir 将要删除的文件目录
-     */
-    private static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            //递归删除目录中的子目录下
-            for (int i = 0; i < children.length; i++) {
-                boolean success = deleteDir(new File(dir, children[i]));
-                if (!success) {
-                    return false;
-                }
-            }
-        }
-        // 目录此时为空，可以删除
-        return dir.delete();
-    }
-
-    public static boolean delFolder(String folderPath) {
-        boolean flag = false;
-        try {
-            File file = new File(getAppSavePath() + "/" + folderPath);
-            if (!file.exists()) {
-                return true;
-            } else {
-                delPathFile(file.getPath(), true);
-                new File(folderPath).delete();
-                flag = true;
-            }
-        } catch (Exception e) {
-            System.out.println("删除文件夹操作出错:" + folderPath);
-            e.printStackTrace();
-        }
-        LogUtil.i("Vince", "删除文件夹" + flag);
-        return flag;
-    }
-
-    private static boolean delPathFile(String path, boolean allFolder) {
-        File file = new File(path);
-        if (!file.exists() || !file.isDirectory()) {
-            return false;
-        }
-        String[] tempList = file.list();
-        int i = 0;
-        while (i < tempList.length) {
-            File temp;
-            if (path.endsWith(File.separator)) {
-                temp = new File(path + tempList[i]);
-            } else {
-                temp = new File(path + File.separator + tempList[i]);
-            }
-            if (temp.isFile() && !temp.delete()) {
-                return false;
-            }
-            if (allFolder && temp.isDirectory() && (!delPathFile(path + InternalZipConstants.ZIP_FILE_SEPARATOR + tempList[i], allFolder) || !delFolder(path + InternalZipConstants.ZIP_FILE_SEPARATOR + tempList[i]))) {
-                return false;
-            }
-            i++;
-        }
+    //删除文件夹和文件夹里面的文件
+    public static boolean delFolder(String pPath) {
+        File dir = new File(getAppSavePath() + "/" + pPath);
+        deleteDirWihtFile(dir);
         return true;
     }
+
+    public static void deleteDirWihtFile(File dir) {
+        if (dir == null || !dir.exists() || !dir.isDirectory())
+            return;
+        for (File file : dir.listFiles()) {
+            if (file.isFile())
+                file.delete(); // 删除所有文件
+            else if (file.isDirectory())
+                deleteDirWihtFile(file); // 递规的方式删除文件夹
+        }
+        dir.delete();// 删除目录本身
+    }
+
 }

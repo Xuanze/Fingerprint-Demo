@@ -17,9 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+
 /**
- * 时间设置
- * <p>
  * Created by Administrator on 2017/8/1.
  */
 public class TimeActivity extends BaseActivity implements OnClickListener {
@@ -55,7 +54,6 @@ public class TimeActivity extends BaseActivity implements OnClickListener {
 
     @Override
     public void initData() {
-
     }
 
     @Override

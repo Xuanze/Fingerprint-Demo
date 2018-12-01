@@ -2,11 +2,8 @@ package com.zhongruan.android.fingerprint_demo.ui;
 
 import android.app.AlarmManager;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.KeyEvent;
@@ -30,7 +27,6 @@ import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
 import com.zhongruan.android.fingerprint_demo.dialog.HintDialog2;
 import com.zhongruan.android.fingerprint_demo.dialog.IPDialog;
 import com.zhongruan.android.fingerprint_demo.dialog.JiuGonggeDialog;
-import com.zhongruan.android.fingerprint_demo.service.MyService;
 import com.zhongruan.android.fingerprint_demo.socket.SocketClient;
 import com.zhongruan.android.fingerprint_demo.utils.ABLSynCallback;
 import com.zhongruan.android.fingerprint_demo.utils.DateUtil;
@@ -57,36 +53,29 @@ import rx.android.BuildConfig;
  * Created by Administrator on 2017/8/1.
  */
 public class TestActivity extends BaseActivity implements View.OnClickListener {
-    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfcj, linearlayoutCjjl, linearlayoutSfrz, linearlayoutKwdj, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz, ll_test_cqqd;
+    private LinearLayout llNowtime, llLocalip, llNetip, linearlayoutSfrz, linearlayoutKwdj, linearlayoutSfcj, linearlayoutCjjl, linearlayoutRzjl, linearlayoutSjgl, ll_test_xqkc, ll_test_jcsz;
     private TextView nowtimeTv, nowdayTv, localipTv, tvConnectState, netipTv, upload_app_tv, version_app_tv, mTvKd, mTvKc, mTvCc, mTvTs;
     private ImageView imgConnectState;
     private SocketClient client;
     private Map<String, Object> map;
     private List<Ks_cc> cc;
     private List<Ks_kc> kc;
-    private boolean receive;
     private MyTimeTask timeTask;
-    private Intent intent;
-    private MyReceiver myReceiver;
-    private boolean isRegister = false;
-    private final int socketStr = 11111;
-    private final int timeStr = 22222;
-    private final int ipStr = 33333;
     private List<Ks_kc> ksKcList;
     private String kcmc;
     private final String TAG = "TestActivity";
     private Handler checkMessageHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case socketStr:
+                case ABLConfig.TEST_SOCKET:
                     startCheckMeesageFromKD();
                     break;
-                case timeStr:
+                case ABLConfig.TEST_TIME:
                     localipTv.setText(ConfigApplication.getApplication().getDeviceIP());
                     tvConnectState.setText(ConfigApplication.getApplication().getKDConnectState() ? "已连接校端" : "未连接校端");
                     imgConnectState.setBackgroundResource(ConfigApplication.getApplication().getKDConnectState() ? R.drawable.img_module_tab_footer_base_icon_connect : R.drawable.img_module_tab_footer_base_icon_disconnect);
                     break;
-                case ipStr:
+                case ABLConfig.TEST_IP:
                     nowtimeTv.setText(DateUtil.getNowTimeNoDate());
                     nowdayTv.setText(DateUtil.getDateByFormat("yyyy年MM月dd日"));
                     break;
@@ -119,14 +108,12 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         linearlayoutSjgl = findViewById(R.id.linearlayout_sjgl);
         ll_test_xqkc = findViewById(R.id.ll_test_xqkc);
         ll_test_jcsz = findViewById(R.id.ll_test_jcsz);
-        ll_test_cqqd = findViewById(R.id.ll_test_cqqd);
         version_app_tv = findViewById(R.id.version_app_tv);
         llNowtime = findViewById(R.id.ll_nowtime);
         mTvKd = findViewById(R.id.tv_kd);
         mTvKc = findViewById(R.id.tv_kc);
         mTvCc = findViewById(R.id.tv_cc);
         mTvTs = findViewById(R.id.tv_ts);
-        intent = new Intent(this, MyService.class);
         localipTv.setText(ConfigApplication.getApplication().getDeviceIP());
     }
 
@@ -143,7 +130,6 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         linearlayoutSjgl.setOnClickListener(this);
         ll_test_xqkc.setOnClickListener(this);
         ll_test_jcsz.setOnClickListener(this);
-        ll_test_cqqd.setOnClickListener(this);
     }
 
     @Override
@@ -157,7 +143,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         timeTask = new MyTimeTask(1000, new TimerTask() {
             @Override
             public void run() {
-                checkMessageHandler.sendEmptyMessage(ipStr);
+                checkMessageHandler.sendEmptyMessage(ABLConfig.TEST_IP);
             }
         });
         timeTask.start();
@@ -218,7 +204,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     }).setBackgroundResource(R.drawable.img_base_icon_info).setNOVisibility(true).setLLButtonVisibility(true).setTitle("未导入数据").setPositiveButton("确定").show();
                 } else if (cc.size() == 0) {
                     Intent intent = new Intent(this, SelectKcCcActivity.class);
-                    intent.putExtra("sfrz", "1");
+                    intent.putExtra(ABLConfig.TEST_SFRZ, ABLConfig.TEST_SFRZ_RZ);
                     startActivity(intent);
                 } else {
                     if (!DateUtil.isTime(DateUtil.dateToLong(DateUtil.getNowTime_Millisecond3()), DateUtil.dateToLong(cc.get(0).getCc_kssj()), DateUtil.dateToLong(cc.get(0).getCc_jssj()))) {
@@ -227,7 +213,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                             public void onClick(Dialog dialog, boolean confirm) {
                                 if (confirm) {
                                     Intent intent = new Intent(TestActivity.this, SelectKcCcActivity.class);
-                                    intent.putExtra("sfrz", "1");
+                                    intent.putExtra(ABLConfig.TEST_SFRZ, ABLConfig.TEST_SFRZ_RZ);
                                     startActivity(intent);
                                     dialog.dismiss();
                                 } else {
@@ -268,7 +254,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     }).setBackgroundResource(R.drawable.img_base_icon_info).setNOVisibility(true).setLLButtonVisibility(true).setTitle("未导入数据").setPositiveButton("确定").show();
                 } else if (cc.size() == 0) {
                     Intent intent = new Intent(this, SelectKcCcActivity.class);
-                    intent.putExtra("sfrz", "3");
+                    intent.putExtra(ABLConfig.TEST_SFRZ, ABLConfig.TEST_SFRZ_KWDJ);
                     startActivity(intent);
                 } else {
                     if (!DateUtil.isTime(DateUtil.dateToLong(DateUtil.getNowTime_Millisecond3()), DateUtil.dateToLong(cc.get(0).getCc_kssj()), DateUtil.dateToLong(cc.get(0).getCc_jssj()))) {
@@ -277,7 +263,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                             public void onClick(Dialog dialog, boolean confirm) {
                                 if (confirm) {
                                     Intent intent = new Intent(TestActivity.this, SelectKcCcActivity.class);
-                                    intent.putExtra("sfrz", "3");
+                                    intent.putExtra(ABLConfig.TEST_SFRZ, ABLConfig.TEST_SFRZ_KWDJ);
                                     startActivity(intent);
                                     dialog.dismiss();
                                 } else {
@@ -318,7 +304,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     }).setBackgroundResource(R.drawable.img_base_icon_info).setNOVisibility(true).setLLButtonVisibility(true).setTitle("未导入数据").setPositiveButton("确定").show();
                 } else if (cc.size() == 0) {
                     Intent intent = new Intent(this, SelectKcCcActivity.class);
-                    intent.putExtra("sfrz", "2");
+                    intent.putExtra(ABLConfig.TEST_SFRZ, ABLConfig.TEST_SFRZ_RZJL);
                     startActivity(intent);
                 } else {
                     startActivity(new Intent(this, RZDJJLActivity.class));
@@ -374,8 +360,8 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                                 MyApplication.getDaoInstant(getBaseContext()).getDatabase().execSQL("UPDATE " + Ks_kcDao.TABLENAME + " SET  kc_extract = 0");
                                 dialog.dismiss();
                                 Intent intent = new Intent(TestActivity.this, SelectKcCcActivity.class);
-                                intent.putStringArrayListExtra("kcmc", list);
-                                intent.putExtra("sfrz", "1");
+                                intent.putStringArrayListExtra(ABLConfig.TEST_SFRZ_KCMC, list);
+                                intent.putExtra(ABLConfig.TEST_SFRZ, ABLConfig.TEST_SFRZ_RZ);
                                 startActivity(intent);
                             } else {
                                 dialog.dismiss();
@@ -400,58 +386,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             case R.id.ll_nowtime:
                 startActivity(new Intent(this, TimeActivity.class));
                 break;
-            case R.id.ll_test_cqqd:
-                new HintDialog(this, R.style.dialog, "是否需要重启驱动模块？", new HintDialog.OnCloseListener() {
-                    @Override
-                    public void onClick(Dialog dialog, boolean confirm) {
-                        if (confirm) {
-                            MyApplication.getYltFingerEngine().freeEngine();
-                            MyApplication.getYltIdCardEngine().freeEngine();
-                            stopService(intent);
-                            dialog.dismiss();
-                            showProgressDialog(TestActivity.this, "正在重启驱动模块，请稍后...", false);
-                            //启动服务
-                            startService(new Intent(TestActivity.this, MyService.class));
-                            //注册广播接收器
-                            if (!isRegister) {
-                                myReceiver = new MyReceiver();
-                                IntentFilter filter = new IntentFilter();
-                                filter.addAction("MyService");
-                                TestActivity.this.registerReceiver(myReceiver, filter);
-                                isRegister = true;
-                            }
-                        } else {
-                            dialog.dismiss();
-                        }
-                    }
-                }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("提示").setPositiveButton("是").setNegativeButton("否").show();
-                break;
         }
-    }
-
-    private void downApp() {
-        ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
-            @Override
-            public Object callback() {
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        SocketClient socketClient = new SocketClient(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_ip());
-                        receive = socketClient.receiveUnLockField("", ABLConfig.DATAVERSION_DOWNLOAD, FileUtils.getSDCardPath() + "/Apk_App/", "1", checkMessageHandler);
-                    }
-                }.run();
-                return receive;
-            }
-        }, new ABLSynCallback.ForegroundCall() {
-            @Override
-            public void callback(Object obj) {
-                if (((Boolean) obj).booleanValue()) {
-                    Toast.makeText(TestActivity.this, "正在下载中。。。", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(TestActivity.this, "下载失败。。。", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
     }
 
     private void ChangeText(List<Ks_kc> kcStr, List<Ks_cc> ccStr) {
@@ -520,7 +455,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
             public void callback(Object obj) {
                 if (obj != null) {
                     ConfigApplication.getApplication().setKDConnectState(true);
-                    checkMessageHandler.sendEmptyMessage(timeStr);
+                    checkMessageHandler.sendEmptyMessage(ABLConfig.TEST_TIME);
                     Map<String, Object> messages = (Map) obj;
                     String message = BuildConfig.VERSION_NAME;
                     if (messages.get("mess") != null) {
@@ -540,7 +475,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
                     }
                 } else {
                     ConfigApplication.getApplication().setKDConnectState(false);
-                    checkMessageHandler.sendEmptyMessage(timeStr);
+                    checkMessageHandler.sendEmptyMessage(ABLConfig.TEST_TIME);
                 }
                 checkAgain();
             }
@@ -548,9 +483,9 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void checkAgain() {
-        this.checkMessageHandler.removeMessages(socketStr);
+        this.checkMessageHandler.removeMessages(ABLConfig.TEST_SOCKET);
         Message msg = new Message();
-        msg.what = socketStr;
+        msg.what = ABLConfig.TEST_SOCKET;
         this.checkMessageHandler.sendMessageDelayed(msg, 10000);
     }
 
@@ -629,26 +564,6 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
         }
     }
 
-    /**
-     * 获取广播数据
-     *
-     * @author jiqinlin
-     */
-    public class MyReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            int a = bundle.getInt("a");
-            int b = bundle.getInt("b");
-            LogUtil.i("123", "a:   " + a + "   b:   " + b);
-            if (a == 1 && b == 1) {
-                dismissProgressDialog();
-                ShowHintDialog(context, "重启驱动模块完成", "提示", R.drawable.img_base_icon_correct, "知道了", false);
-
-            }
-        }
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -717,10 +632,7 @@ public class TestActivity extends BaseActivity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         timeTask.stop();
-        checkMessageHandler.removeMessages(socketStr);
+        checkMessageHandler.removeMessages(ABLConfig.TEST_SOCKET);
         ConfigApplication.getApplication().setKDConnectState(false);
-        MyApplication.getYltFingerEngine().freeEngine();
-        MyApplication.getYltIdCardEngine().freeEngine();
-        stopService(intent);
     }
 }

@@ -19,6 +19,7 @@ import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.adapter.RZDJJLHistoryAdapter;
 import com.zhongruan.android.fingerprint_demo.adapter.view.RzdjjlHistoryViw;
 import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
+import com.zhongruan.android.fingerprint_demo.config.ABLConfig;
 import com.zhongruan.android.fingerprint_demo.db.DbServices;
 import com.zhongruan.android.fingerprint_demo.db.entity.Bk_ks;
 import com.zhongruan.android.fingerprint_demo.db.entity.Sfrz_rzjg;
@@ -71,7 +72,7 @@ public class RZDJJLActivity extends BaseActivity implements View.OnClickListener
     private List<Bk_ks> bk_ks, bkKsLs;
     private String ccmc, kcmc;
     private List<Sfrz_rzjg> rzjg1, rzjg2;
-    private String TAG = "HNZR";
+    private String TAG = "RZDJJLActivity";
     private RZDJJLHistoryAdapter rzdjjlHistoryAdapter;
     private List<List<RzdjjlHistoryViw>> historyLists;
     // ExpandListView 列表状态 1展开 0关闭 该案例中设置为三级
@@ -219,8 +220,8 @@ public class RZDJJLActivity extends BaseActivity implements View.OnClickListener
         switch (v.getId()) {
             case R.id.list_item_statistic_history_item:
                 Intent intent = new Intent(RZDJJLActivity.this, RZXQActivity.class);
-                intent.putExtra("rzjlkc", kcmc);
-                intent.putExtra("rzjlcc", ccmc);
+                intent.putExtra(ABLConfig.RZDJJL_KC, kcmc);
+                intent.putExtra(ABLConfig.RZDJJL_CC, ccmc);
                 startActivity(intent);
                 break;
             case R.id.ll_rzjl_back:
@@ -265,8 +266,8 @@ public class RZDJJLActivity extends BaseActivity implements View.OnClickListener
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         Intent intent = new Intent(RZDJJLActivity.this, RZXQActivity.class);
         RzdjjlHistoryViw rzdjjlHistoryViw = (RzdjjlHistoryViw) rzdjjlHistoryAdapter.getChild(groupPosition, childPosition);
-        intent.putExtra("rzjlkc", rzdjjlHistoryViw.getKc_mc());
-        intent.putExtra("rzjlcc", rzdjjlHistoryViw.getCc_mc());
+        intent.putExtra(ABLConfig.RZDJJL_KC, rzdjjlHistoryViw.getKc_mc());
+        intent.putExtra(ABLConfig.RZDJJL_CC, rzdjjlHistoryViw.getCc_mc());
         startActivity(intent);
         return true;
     }

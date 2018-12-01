@@ -9,8 +9,10 @@ import android.widget.LinearLayout;
 import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.adapter.ViewPagerAdapter;
 import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
+import com.zhongruan.android.fingerprint_demo.config.ABLConfig;
 import com.zhongruan.android.fingerprint_demo.db.DbServices;
 import com.zhongruan.android.fingerprint_demo.fragments.RZXQFragment;
+
 
 /**
  * 认证详情
@@ -32,8 +34,8 @@ public class RZXQActivity extends BaseActivity implements View.OnClickListener {
         mTabsRz = findViewById(R.id.tabs_rz);
         mVpRzView = findViewById(R.id.vp_rz_view);
         Intent getIntent = getIntent();
-        kc = getIntent.getStringExtra("rzjlkc");
-        cc = getIntent.getStringExtra("rzjlcc");
+        kc = getIntent.getStringExtra(ABLConfig.RZDJJL_KC);
+        cc = getIntent.getStringExtra(ABLConfig.RZDJJL_CC);
         ViewPagerAdapter vpAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         vpAdapter.addFragment(new RZXQFragment().newInstance(kc, cc, 0), "全部(" + DbServices.getInstance(this).queryBKKSList(kc, cc).size() + ")");
         vpAdapter.addFragment(new RZXQFragment().newInstance(kc, cc, 1), "通过(" + DbServices.getInstance(this).queryBKKSLists(kc, cc, "1").size() + ")");
