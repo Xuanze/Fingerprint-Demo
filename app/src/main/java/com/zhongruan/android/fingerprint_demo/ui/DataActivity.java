@@ -892,7 +892,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                 LogUtil.i("files:" + files.getPath());
                 File[] file = files.listFiles();
                 for (int i = 0; i < file.length; i++) {
-                    LogUtil.i(file[i].getPath());
+                    LogUtil.i("getFileName", file[i].getPath());
                     FileUtils.renameFile(file[i].getPath());
                     if (i == (file.length - 1)) {
                         return Boolean.valueOf(true);
@@ -906,12 +906,18 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                     Message message9 = new Message();
                     message9.what = 7;
                     handler.sendMessage(message9);
-                    importData("bk_ks.txt", Bk_ks_tempDao.TABLENAME, 8, true, false, false);
-                    importData("bk_ksxp.txt", Bk_ksxpDao.TABLENAME, 10, false, true, false);
-                    importData("kstz_zw.txt", Kstz_zwDao.TABLENAME, 12, false, false, true);
+                    if (!new File(NewPith + NewFilePath + "/bk_ksxp.txt").exists()) {
+                        multiProgressDialog.dismiss();
+                        ShowHintDialog(DataActivity.this, "数据导入失败，请检查是否导入考生照片!", "提示", R.drawable.img_base_icon_error, "知道了", false);
+                        return;
+                    } else {
+                        importData("bk_ks.txt", Bk_ks_tempDao.TABLENAME, 8, true, false, false);
+                        importData("bk_ksxp.txt", Bk_ksxpDao.TABLENAME, 10, false, true, false);
+                        importData("kstz_zw.txt", Kstz_zwDao.TABLENAME, 12, false, false, true);
+                    }
                 } else {
                     multiProgressDialog.dismiss();
-                    ShowHintDialog(DataActivity.this, "报名照片复制失败", "U盘导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                    ShowHintDialog(DataActivity.this, "报名照片复制失败", "提示", R.drawable.img_base_icon_error, "知道了", false);
                 }
             }
         });
@@ -995,7 +1001,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                     if (!isCG) {
                         isCG = true;
                         multiProgressDialog.dismiss();
-                        ShowHintDialog(DataActivity.this, "考生编排信息导入失败", "U盘导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                        ShowHintDialog(DataActivity.this, "考生编排信息导入失败", "提示", R.drawable.img_base_icon_error, "知道了", false);
                     }
                 }
             }
@@ -1123,7 +1129,7 @@ public class DataActivity extends BaseActivity implements View.OnClickListener {
                     }
                 } else {
                     multiProgressDialog.dismiss();
-                    ShowHintDialog(DataActivity.this, "考生编排信息导入失败", "U盘导入数据", R.drawable.img_base_icon_error, "知道了", false);
+                    ShowHintDialog(DataActivity.this, "考生编排信息导入失败", "提示", R.drawable.img_base_icon_error, "知道了", false);
                 }
             }
         });
