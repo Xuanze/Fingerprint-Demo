@@ -1,5 +1,7 @@
 package com.zhongruan.android.fingerprint_demo.ui;
 
+import android.app.Application;
+
 import com.zhongruan.android.fingerprint_demo.config.ABLConfig;
 import com.zhongruan.android.fingerprint_demo.utils.NetUtil;
 import com.zhongruan.android.fingerprint_demo.utils.PreferenceUtils;
@@ -130,5 +132,21 @@ public class ConfigApplication {
 
     public String getNetImportTime() {
         return PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.NET_IMPORT_TIME, ABLConfig.IMPORT_TIME);
+    }
+
+    public void setCameraExposure(String paramString) {
+        PreferenceUtils.getInstance(MyApplication.getApplication()).setPrefString(ABLConfig.CAMERA_EXPOSURE, paramString);
+    }
+
+    public String getCameraExposure() {
+        return PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.CAMERA_EXPOSURE, ABLConfig.IMPORT_TIME + "0");
+    }
+
+    public void setCameraDirection(String paramString) {
+        PreferenceUtils.getInstance(MyApplication.getApplication()).setPrefString(ABLConfig.CAMERA_DIRECTION, paramString);
+    }
+
+    public String getCameraDirectionStr() {
+        return PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.CAMERA_DIRECTION, "正");
     }
 }

@@ -20,6 +20,8 @@ public class ABLConfig {
     public static final String NET_EXPORT_TIME = "NET_EXPORT_TIME";
     public static final String CJ_EXPORT_TIME = "CJ_EXPORT_TIME";
     public static final String NET_IMPORT_TIME = "NET_IMPORT_TIME";
+    public static final String CAMERA_EXPOSURE = "CAMERA_EXPOSURE";
+    public static final String CAMERA_DIRECTION = "CAMERA_DIRECTION";
     public static final int RZJL = 306;
     public static final int RZJG = 305;
     public static final String IMPORT_TIME = "";
@@ -46,6 +48,8 @@ public class ABLConfig {
     public static final int RZ_FINGER_SOUND = 204;
     public static final int RZ_IDCARD_SOUND = 205;
     public static final int RZ_CAMERA_SOUND = 206;
+    public static final int RZ_FINGER = 207;
+    public static final int RZ_CAMERA = 208;
 
     public static final String RZDJJL_KC = "RZDJJL_KC";
     public static final String RZDJJL_CC = "RZDJJL_CC";

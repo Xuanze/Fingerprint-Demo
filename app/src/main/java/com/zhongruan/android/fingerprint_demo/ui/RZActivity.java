@@ -130,6 +130,13 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                         state_camera.setVisibility(View.GONE);
                         rl_camera.setVisibility(View.VISIBLE);
                         break;
+                    case ABLConfig.RZ_FINGER:
+                        KsPZ();
+                        CS = 0;
+                        break;
+                    case ABLConfig.RZ_CAMERA:
+                        doTakePicture();
+                        break;
                 }
             }
         };
@@ -157,9 +164,8 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                                 ShowToast("认证失败，请重试");
                                 handler.postDelayed(FingerThread, 500);// 间隔1秒
                             } else {
-                                CS = 0;
                                 LogUtil.i(zwid);
-                                KsPZ();
+                                handler.sendEmptyMessage(ABLConfig.RZ_FINGER);
                             }
                         }
                     });
@@ -210,7 +216,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         };
     }
 
-
     @Override
     public void setContentView() {
         setContentView(R.layout.activity_rz);
@@ -255,7 +260,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         mTvFaceVerfiyResult = findViewById(R.id.tvFaceVerfiyResult);
         mBtRgshTg = findViewById(R.id.btRgshTg);
         mBtRgshBtg = findViewById(R.id.btRgshBtg);
-
     }
 
     @Override
@@ -346,7 +350,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("提示").setPositiveButton("是").setNegativeButton("否").show();
                 break;
             case R.id.llPhoto:
-                doTakePicture();
+                handler.sendEmptyMessage(ABLConfig.RZ_CAMERA);
                 break;
             case R.id.llSwitch:
                 CameraInterface.getInstance().cameraSwitch(surfaceView);
@@ -400,8 +404,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 }).show();
                 break;
             case R.id.rl_bcpz:
-                CS = 0;
-                KsPZ();
+                handler.sendEmptyMessage(ABLConfig.RZ_FINGER);
                 break;
         }
     }

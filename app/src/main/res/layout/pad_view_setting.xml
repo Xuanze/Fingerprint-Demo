@@ -236,6 +236,99 @@
                     android:textSize="20.0sp" />
             </LinearLayout>
 
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="51.5dip"
+                android:layout_marginTop="20.0dip"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50.0dip"
+                    android:background="@drawable/shape_setting_selector_top"
+                    android:clickable="false"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="20dp"
+                    android:text="摄像头设置"
+                    android:textColor="#ffff9f15"
+                    android:textSize="24.0sp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50.0dip"
+                    android:orientation="vertical" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1.5dip"
+                    android:layout_alignParentBottom="true"
+                    android:background="#ffff9f15" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@id/ll_bgd"
+                android:layout_width="match_parent"
+                android:layout_height="50.0dip"
+                android:background="@drawable/shape_setting_selector_center"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:paddingLeft="15.0dip">
+
+                <TextView
+                    android:layout_width="0.0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0"
+                    android:drawableLeft="@drawable/img_module_tab_setting_base_verification"
+                    android:drawablePadding="8.0dip"
+                    android:gravity="center_vertical"
+                    android:state_pressed="true"
+                    android:text="曝光度"
+                    android:textSize="20.0sp" />
+
+                <TextView
+                    android:id="@id/tv_bgd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dip"
+                    android:gravity="center_vertical"
+                    android:textSize="20.0sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1.0dip"
+                android:background="#ffdcdcdc" />
+
+            <LinearLayout
+                android:id="@id/ll_sxt"
+                android:layout_width="match_parent"
+                android:layout_height="50.0dip"
+                android:background="@drawable/shape_setting_selector_center"
+                android:clickable="true"
+                android:orientation="horizontal"
+                android:paddingLeft="15.0dip">
+
+                <TextView
+                    android:layout_width="0.0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0"
+                    android:drawableLeft="@drawable/img_module_tab_setting_base_verification"
+                    android:drawablePadding="8.0dip"
+                    android:gravity="center_vertical"
+                    android:state_pressed="true"
+                    android:text="摄像头"
+                    android:textSize="20.0sp" />
+
+                <TextView
+                    android:id="@id/tv_sxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="20dip"
+                    android:gravity="center_vertical"
+                    android:textSize="20.0sp" />
+            </LinearLayout>
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="51.5dip"

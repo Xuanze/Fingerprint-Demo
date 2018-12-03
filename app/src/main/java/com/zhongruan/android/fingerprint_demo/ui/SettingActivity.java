@@ -3,6 +3,7 @@ package com.zhongruan.android.fingerprint_demo.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,6 +13,7 @@ import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
 import com.zhongruan.android.fingerprint_demo.db.DbServices;
 import com.zhongruan.android.fingerprint_demo.dialog.HintDialog;
+import com.zhongruan.android.fingerprint_demo.dialog.SeekbarDialog;
 import com.zhongruan.android.fingerprint_demo.utils.ABLSynCallback;
 import com.zhongruan.android.fingerprint_demo.utils.LogUtil;
 import com.zhongruan.android.fingerprint_demo.utils.Utils;
@@ -42,6 +44,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
     private TextView mTvStorageTip2;
     private long size;
     private long total;
+    private TextView mTvBgd;
+    private LinearLayout mLlBgd;
+    private TextView mTvSxt;
+    private LinearLayout mLlSxt;
 
     @Override
     public void setContentView() {
@@ -67,6 +73,10 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mTvStorage = findViewById(R.id.tv_storage);
         mTvStorageTip = findViewById(R.id.tv_storage_tip);
         mTvStorageTip2 = findViewById(R.id.tv_storage_tip2);
+        mTvBgd = findViewById(R.id.tv_bgd);
+        mLlBgd = findViewById(R.id.ll_bgd);
+        mTvSxt = findViewById(R.id.tv_sxt);
+        mLlSxt = findViewById(R.id.ll_sxt);
     }
 
     @Override
@@ -78,6 +88,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         mLlFingerCfcs.setOnClickListener(this);
         mLlHyfs.setOnClickListener(this);
         mLlFingerBdfw.setOnClickListener(this);
+        mLlBgd.setOnClickListener(this);
+        mLlSxt.setOnClickListener(this);
     }
 
     @Override
@@ -114,6 +126,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
         } else if (Integer.parseInt(DbServices.getInstance(getBaseContext()).loadAllSbSetting().get(0).getSb_finger_bdfw()) == 1) {
             mTvFingerBdfw.setText("1 : N");
         }
+        mTvBgd.setText(ConfigApplication.getApplication().getCameraExposure());
+        mTvSxt.setText(ConfigApplication.getApplication().getCameraDirectionStr());
     }
 
     @Override
@@ -224,6 +238,32 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                         }
                     }
                 }).setBackgroundResource(R.drawable.img_base_icon_question).setNOVisibility(true).setLLButtonVisibility(true).setTitle("U盘导入数据").setPositiveButton("是").setNegativeButton("否").show();
+                break;
+            case R.id.ll_bgd:
+                new SeekbarDialog(this, R.style.dialog, new SeekbarDialog.OnCloseListener() {
+                    @Override
+                    public void onClick(Dialog dialog, String str, boolean confirm) {
+                        if (confirm) {
+                            ConfigApplication.getApplication().setCameraExposure(str.trim());
+                            mTvBgd.setText(str.trim());
+                            dialog.dismiss();
+                        } else {
+                            dialog.dismiss();
+                        }
+                    }
+                }).show();
+                break;
+            case R.id.ll_sxt:
+                final String[] sxtArry = new String[]{"正", "反"};
+                builder = new AlertDialog.Builder(this);// 自定义对话框
+                builder.setSingleChoiceItems(sxtArry, ConfigApplication.getApplication().getCameraDirectionStr().equals("正") ? 0 : 1, new DialogInterface.OnClickListener() {// 2默认的选中
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mTvSxt.setText(sxtArry[which]);
+                        dialog.dismiss();//随便点击一个item消失对话框，不用点击确认取消
+                    }
+                });
+                builder.show();// 让弹出框显示
                 break;
         }
     }

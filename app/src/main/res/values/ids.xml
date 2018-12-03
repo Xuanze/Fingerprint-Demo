@@ -370,4 +370,12 @@
     <item name="tv_kc" type="id" />
     <item name="tv_cc" type="id" />
     <item name="tv_ts" type="id" />
+    <item name="text3" type="id" />
+    <item name="text1" type="id" />
+    <item name="seekbar1" type="id" />
+    <item name="text2" type="id" />
+    <item name="ll_bgd" type="id" />
+    <item name="tv_bgd" type="id" />
+    <item name="ll_sxt" type="id" />
+    <item name="tv_sxt" type="id" />
 </resources>

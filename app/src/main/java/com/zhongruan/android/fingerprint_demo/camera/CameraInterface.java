@@ -10,6 +10,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.zhongruan.android.fingerprint_demo.camera.util.CamParaUtil;
+import com.zhongruan.android.fingerprint_demo.camera.util.Util;
+import com.zhongruan.android.fingerprint_demo.ui.ConfigApplication;
 import com.zhongruan.android.fingerprint_demo.utils.Utils;
 
 import java.io.IOException;
@@ -68,12 +70,15 @@ public class CameraInterface {
             mParams.setPreviewSize(previewSize.width, previewSize.height);
             mCamera.setDisplayOrientation(cameraRotateSys);
             CamParaUtil.getInstance().printSupportFocusMode(mParams);
+            String str = ConfigApplication.getApplication().getCameraExposure();
+            mParams.setExposureCompensation(0);
             List<String> focusModes = mParams.getSupportedFocusModes();
             if (focusModes.contains("continuous-video")) {
                 mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             }
             mCamera.setParameters(mParams);
             try {
+                mParams.setExposureCompensation(Integer.parseInt(str));
                 mCamera.setPreviewDisplay(holder);
                 mCamera.startPreview();//开启预览
             } catch (IOException e) {

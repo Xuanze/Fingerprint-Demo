@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:orientation="vertical"
+    android:padding="20.0dip">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="#ffebebec"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/title"
+            style="@style/dialogTitleText"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/dialog_title_height"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="曝光度"
+            android:textSize="24.0sp"
+            android:visibility="visible" />
+
+        <View
+            android:id="@id/titleLine"
+            android:layout_width="fill_parent"
+            android:layout_height="1.0px"
+            android:background="@color/dialogTitleLine" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#ffe0e0e1"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="0.0dip"
+            android:paddingBottom="0.0dip">
+
+            <ImageView
+                android:id="@id/ivTip"
+                android:layout_width="83.32999dip"
+                android:layout_height="83.32999dip"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="26.519989dip"
+                android:layout_marginRight="14.199982dip"
+                android:background="@drawable/img_base_icon_info" />
+
+            <LinearLayout
+                android:id="@id/content"
+                android:layout_width="590.3828dip"
+                android:layout_height="wrap_content"
+                android:background="#ffe0e0e1"
+                android:gravity="center_vertical"
+                android:minWidth="590.3828dip"
+                android:minHeight="124.04999dip"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@id/text3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="8.0dip"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@color/black"
+                    android:textSize="34.089996dip"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="55.0dip">
+
+                    <TextView
+                        android:id="@id/text1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="10.0dip"
+                        android:gravity="center"
+                        android:text="0"
+                        android:textColor="@color/black"
+                        android:textSize="34.089996dip"
+                        android:textStyle="bold" />
+
+                    <SeekBar
+                        android:id="@id/seekbar1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toLeftOf="@id/text2"
+                        android:layout_toRightOf="@id/text1"
+                        android:maxHeight="25.0dip"
+                        android:minHeight="25.0dip"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:progressDrawable="@drawable/shape_seekbar_style"
+                        android:thumb="@drawable/shape_seekbar_thumb" />
+
+                    <TextView
+                        android:id="@id/text2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="10.0dip"
+                        android:gravity="center"
+                        android:text="100"
+                        android:textColor="@color/black"
+                        android:textSize="34.089996dip"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </LinearLayout>
+
+            <ImageView
+                android:id="@id/ivTip"
+                android:layout_width="83.32999dip"
+                android:layout_height="83.32999dip"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="26.519989dip"
+                android:layout_marginRight="14.199982dip" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0px"
+            android:background="@color/dialogTitleLine" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="117.41998dip"
+            android:layout_gravity="bottom"
+            android:background="@drawable/shape_dialog_bottom_bg"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@id/positiveButton"
+                android:layout_width="236.73999dip"
+                android:layout_height="60.609985dip"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="20.0dip"
+                android:background="@drawable/shape_dialog_ok2"
+                android:gravity="center"
+                android:text="@string/ok"
+                android:textColor="@color/white"
+                android:textSize="24.0sp" />
+
+            <Button
+                android:id="@id/negativeButton"
+                android:layout_width="236.73999dip"
+                android:layout_height="60.609985dip"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="20.0dip"
+                android:background="@drawable/shape_dialog_cancel2"
+                android:gravity="center"
+                android:text="@string/cancel"
+                android:textColor="@color/black"
+                android:textSize="24.0sp" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
