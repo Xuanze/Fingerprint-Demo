@@ -16,7 +16,7 @@ import java.util.List;
 import rx.android.BuildConfig;
 
 public class Utils {
-    public static final String DEVICETYPE_YLT1 = "BM7502";
+    public static final String DEVICETYPE_YLT1 = "QUAD-CORE A64 p3";
     public static final String DEVICETYPE_YLT2 = "BM7510";
     private static final int LEFT_FINGER_FIRST = 3;
     private static final int LEFT_FINGER_FOURTH = 1;

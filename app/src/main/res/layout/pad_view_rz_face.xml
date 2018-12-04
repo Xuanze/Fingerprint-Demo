@@ -52,7 +52,7 @@
                 android:layout_gravity="center"
                 android:visibility="gone">
 
-                <com.zhongruan.android.fingerprint_demo.camera.CameraSurfaceView
+                <SurfaceView
                     android:id="@id/sf_face"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

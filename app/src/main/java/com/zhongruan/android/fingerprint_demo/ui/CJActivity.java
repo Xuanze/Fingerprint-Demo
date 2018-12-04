@@ -39,6 +39,7 @@ import com.zhongruan.android.fingerprint_demo.utils.DateUtil;
 import com.zhongruan.android.fingerprint_demo.utils.FileUtils;
 import com.zhongruan.android.fingerprint_demo.utils.IDCard;
 import com.zhongruan.android.fingerprint_demo.utils.LogUtil;
+import com.zhongruan.android.fingerprint_demo.utils.PlaySoundUtils;
 
 import java.util.List;
 
@@ -140,7 +141,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
         tvCollectNum.setText("已采集：" + bkKsCjxxList.size());
         include_idcard.setVisibility(View.VISIBLE);
         tvTitle.setText("采集身份证");
-        soundPool.play(musicId.get(3), 1, 1, 0, 0, 1);
+        PlaySoundUtils.playSoundWithState(103, 1, 1);
         handler.postDelayed(runnable01, 500);
     }
 
@@ -175,7 +176,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                                                 }
                                                 getWIdCard();
                                                 handler.post(runnable02);
-                                                soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+                                                PlaySoundUtils.playSoundWithState(102, 1, 1);
                                                 dialog.dismiss();
                                             } else {
                                                 idCardData = null;
@@ -188,7 +189,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                                 } else {
                                     getWIdCard();
                                     handler.post(runnable02);
-                                    soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+                                    PlaySoundUtils.playSoundWithState(102, 1, 1);
                                 }
                             } else {
                                 ShowToast("输入身份证号有误！");
@@ -196,7 +197,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                         } else {
                             dialog.dismiss();
                             handler.post(runnable01);
-                            soundPool.play(musicId.get(3), 1, 1, 0, 0, 1);
+                            PlaySoundUtils.playSoundWithState(103, 1, 1);
                         }
                     }
                 }).show();
@@ -257,7 +258,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
             case R.id.ll_switch:
                 stopGoogleFaceDetect();
                 isPZ = false;
-                CameraInterface.getInstance().cameraSwitch(surfaceView);
+                CameraInterface.getInstance().cameraSwitch();
                 startGoogleFaceDetect();
                 isPZ = true;
                 break;
@@ -316,7 +317,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                             llFace.setVisibility(View.GONE);
                             tvFaceMsg.setVisibility(View.VISIBLE);
                             handler.postDelayed(runnable01, 1000);
-                            soundPool.play(musicId.get(3), 1, 1, 0, 0, 1);
+                            PlaySoundUtils.playSoundWithState(103, 1, 1);
                             dialog.dismiss();
                         }
                     }
@@ -334,7 +335,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
         public void run() {
             idCardData = MyApplication.getYltIdCardEngine().startScanIdCard();
             if (idCardData != null) {
-                soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
+                PlaySoundUtils.playSoundWithState(101, 1, 1);
                 bkKsCjxxList = DbServices.getInstance(getBaseContext()).querySfzh(idCardData.getSfzh());
                 if (bkKsCjxxList.size() > 0) {
                     new SelectDialog(CJActivity.this, R.style.dialog, "该考生已采集过特征，重复采集会覆盖上一次采集的数据，是否覆盖采集信息？", new SelectDialog.OnCloseListener() {
@@ -354,7 +355,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                                 handler.removeCallbacks(runnable01); //停止刷新
                                 getCjIdCard();
                                 handler.post(runnable02);
-                                soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+                                PlaySoundUtils.playSoundWithState(102, 1, 1);
                                 dialog.dismiss();
                             } else {
                                 idCardData = null;
@@ -368,7 +369,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                     handler.removeCallbacks(runnable01); //停止刷新
                     getCjIdCard();
                     handler.post(runnable02);
-                    soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+                    PlaySoundUtils.playSoundWithState(102, 1, 1);
                 }
             } else {
                 handler.postDelayed(this, 500);// 间隔1秒
@@ -382,7 +383,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
         public void run() {
             fingerData = MyApplication.getYltFingerEngine().fingerCollect();
             if (fingerData != null) {
-                soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
+                PlaySoundUtils.playSoundWithState(101, 1, 1);
                 tvFingerMsg.setVisibility(View.GONE);
                 rlFingerProcess.setVisibility(View.VISIBLE);
                 ivLeftFinger.setVisibility(View.VISIBLE);
@@ -402,7 +403,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                 tvTitle.setText("采集人脸照片");
                 handler.sendEmptyMessage(1);
                 handler.sendEmptyMessageDelayed(2, 500);
-                soundPool.play(musicId.get(4), 1, 1, 0, 0, 1);
+                PlaySoundUtils.playSoundWithState(104, 1, 1);
             }
         }
     };
@@ -574,7 +575,7 @@ public class CJActivity extends BaseActivity implements OnClickListener {
                     llFace.setVisibility(View.GONE);
                     tvFaceMsg.setVisibility(View.VISIBLE);
                     handler.postDelayed(runnable01, 1000);
-                    soundPool.play(musicId.get(3), 1, 1, 0, 0, 1);
+                    PlaySoundUtils.playSoundWithState(103, 1, 1);
                 }
             }
         }).setTitle("提示").show();

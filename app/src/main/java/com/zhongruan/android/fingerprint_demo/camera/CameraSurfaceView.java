@@ -9,12 +9,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
-    private static final String TAG = "HNZR";
     public SurfaceHolder mSurfaceHolder;
+    Context mContext;
 
-    public CameraSurfaceView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        this.mSurfaceHolder = getHolder();
+    public CameraSurfaceView(Context context, SurfaceView surfaceView) {
+        super(context);
+        this.mContext = context;
+        this.mSurfaceHolder = surfaceView.getHolder();
         this.mSurfaceHolder.setFormat(-2);
         this.mSurfaceHolder.setType(3);
         this.mSurfaceHolder.addCallback(this);
@@ -22,23 +23,16 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Log.i(TAG, "surfaceCreated...");
-        if (Camera.getNumberOfCameras() > 1) {
-            CameraInterface.getInstance().doOpenCamera(CameraInfo.CAMERA_FACING_FRONT);
-        } else {
-            CameraInterface.getInstance().doOpenCamera(CameraInfo.CAMERA_FACING_BACK);
-        }
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i(TAG, "surfaceChanged...");
         CameraInterface.getInstance().doStartPreview(mSurfaceHolder, 1.333f, 0);
     }
 
     @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.i(TAG, "surfaceDestroyed...");
         CameraInterface.getInstance().doStopCamera();
     }
 }

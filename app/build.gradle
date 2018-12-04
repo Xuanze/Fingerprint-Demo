@@ -14,6 +14,21 @@ android {
     sourceSets.main {
         jniLibs.srcDirs = ['src/jniLibs']
     }
+    signingConfigs {
+        release {
+            storeFile file("../signature/android.jks")
+            storePassword 'Heao1234'
+            keyAlias 'key0'
+            keyPassword 'Heao1234'
+        }
+
+        debug {
+            storeFile file("../signature/android.jks")
+            storePassword 'Heao1234'
+            keyAlias 'key0'
+            keyPassword 'Heao1234'
+        }
+    }
     greendao {
         schemaVersion 1
         daoPackage 'com.zhongruan.android.fingerprint_demo.db'

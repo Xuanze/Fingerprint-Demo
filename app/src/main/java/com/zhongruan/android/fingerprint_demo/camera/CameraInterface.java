@@ -11,7 +11,11 @@ import android.view.SurfaceView;
 
 import com.zhongruan.android.fingerprint_demo.camera.util.CamParaUtil;
 import com.zhongruan.android.fingerprint_demo.camera.util.Util;
+import com.zhongruan.android.fingerprint_demo.config.ABLConfig;
 import com.zhongruan.android.fingerprint_demo.ui.ConfigApplication;
+import com.zhongruan.android.fingerprint_demo.ui.MyApplication;
+import com.zhongruan.android.fingerprint_demo.utils.CommonUtil;
+import com.zhongruan.android.fingerprint_demo.utils.PreferenceUtils;
 import com.zhongruan.android.fingerprint_demo.utils.Utils;
 
 import java.io.IOException;
@@ -26,6 +30,13 @@ public class CameraInterface {
     private static CameraInterface mCameraInterface;
     public Bitmap rectBitmap;
     public int cameraRotateSys;
+    private int cameraCondition;
+    private String cameraFaceSys;
+    private int camereFrontId = -1;
+    private int camereBackId = -1;
+    public boolean FACING_FRONT = false;
+    public boolean FACING_BACK = false;
+    public boolean isChange = false;
 
     private CameraInterface() {
     }
@@ -37,13 +48,82 @@ public class CameraInterface {
         return mCameraInterface;
     }
 
+    private void initCameraInfo() {
+        cameraFaceSys = "FRONT";
+        cameraRotateSys = CommonUtil.objToInt(PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.CAMERA_DIRECTION, "0")).intValue();
+        if (cameraRotateSys == 0) {
+            isChange = false;
+        } else {
+            isChange = true;
+        }
+        Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+        int cameraCount = Camera.getNumberOfCameras();
+        for (int camId = 0; camId < cameraCount; camId = camId + 0x1) {
+            Camera.getCameraInfo(camId, cameraInfo);
+            if (cameraInfo.facing == 1) {
+                camereFrontId = camId;
+            }
+            if (cameraInfo.facing == 0) {
+                camereBackId = camId;
+            }
+        }
+        if ((camereFrontId != -1) && (camereBackId != -0x1)) {
+            cameraCondition = 3;
+        } else if ((camereFrontId == -1) && (camereBackId == -1)) {
+            cameraCondition = 0;
+        } else if (camereBackId == -1) {
+            cameraCondition = 1;
+        } else {
+            cameraCondition = 2;
+        }
+        if ((cameraFaceSys != null) && (!cameraFaceSys.equals(""))) {
+            switch (cameraCondition) {
+                case 0: {
+                    Log.i("CameraInterface", "设备找不到任何摄像头");
+                    return;
+                }
+                case 1: {
+                    mCamera = Camera.open(camereFrontId);
+                    FACING_FRONT = true;
+                    FACING_BACK = false;
+                    return;
+                }
+                case 2: {
+                    mCamera = Camera.open(camereBackId);
+                    FACING_BACK = true;
+                    FACING_FRONT = false;
+                    return;
+                }
+                case 3: {
+                    if (cameraFaceSys.equals("FRONT")) {
+                        mCamera = Camera.open(camereBackId);
+                        FACING_BACK = true;
+                        FACING_FRONT = false;
+                        return;
+                    }
+                    if (cameraFaceSys.equals("BACK")) {
+                        mCamera = Camera.open(camereFrontId);
+                        FACING_FRONT = true;
+                        FACING_BACK = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * 打开Camera
      */
-    public void doOpenCamera(int cameraId) {
-        Log.i(TAG, "Camera open....");
-        mCamera = Camera.open(cameraId);
-        mCameraId = cameraId;
+    public void doOpenCamera(CameraInterface.CamOpenOverCallback callback) {
+        if (mCamera == null) {
+            initCameraInfo();
+        }
+        callback.cameraHasOpened();
+    }
+
+    public interface CamOpenOverCallback {
+        void cameraHasOpened();
     }
 
     /**
@@ -71,14 +151,13 @@ public class CameraInterface {
             mCamera.setDisplayOrientation(cameraRotateSys);
             CamParaUtil.getInstance().printSupportFocusMode(mParams);
             String str = ConfigApplication.getApplication().getCameraExposure();
-            mParams.setExposureCompensation(0);
+            mParams.setExposureCompensation(Integer.parseInt(str));
             List<String> focusModes = mParams.getSupportedFocusModes();
             if (focusModes.contains("continuous-video")) {
                 mParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
             }
             mCamera.setParameters(mParams);
             try {
-                mParams.setExposureCompensation(Integer.parseInt(str));
                 mCamera.setPreviewDisplay(holder);
                 mCamera.startPreview();//开启预览
             } catch (IOException e) {
@@ -105,26 +184,18 @@ public class CameraInterface {
         }
     }
 
-    public void cameraSwitch(SurfaceView surfaceView) {
-        if (Build.MODEL.equals(Utils.DEVICETYPE_YLT1)) {
-            int newId = (CameraInterface.getInstance().getCameraId() + 1) % 2;
-            CameraInterface.getInstance().doStopCamera();
-            CameraInterface.getInstance().doOpenCamera(newId);
-            CameraInterface.getInstance().doStartPreview(surfaceView.getHolder(), 1.333f, 0);
-        } else if (Build.MODEL.equals(Utils.DEVICETYPE_YLT2)) {
-            if (this.isPreviewing && this.mCamera != null) {
-                if (this.cameraRotateSys < 180) {
-                    this.cameraRotateSys += 180;
-                    this.mCameraId = 1;
-                } else {
-                    this.mCameraId = 0;
-                    this.cameraRotateSys -= 180;
-                }
-                this.mCamera.stopPreview();
-                this.mParams.setRotation(this.cameraRotateSys);
-                this.mCamera.setDisplayOrientation(this.cameraRotateSys);
-                this.mCamera.startPreview();
+    public void cameraSwitch() {
+        if ((isPreviewing) && (mCamera != null)) {
+            if (cameraRotateSys < 180) {
+                cameraRotateSys = (cameraRotateSys + 180);
+            } else {
+                cameraRotateSys = (cameraRotateSys - 180);
             }
+            mCamera.stopPreview();
+            mParams.setRotation(cameraRotateSys);
+            mCamera.setDisplayOrientation(cameraRotateSys);
+            mCamera.startPreview();
+            PreferenceUtils.getInstance(MyApplication.getApplication()).setPrefString(ABLConfig.CAMERA_DIRECTION, cameraRotateSys + "");
         }
     }
 

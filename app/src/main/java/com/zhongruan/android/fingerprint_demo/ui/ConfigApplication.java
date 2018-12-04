@@ -147,6 +147,6 @@ public class ConfigApplication {
     }
 
     public String getCameraDirectionStr() {
-        return PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.CAMERA_DIRECTION, "正");
+        return PreferenceUtils.getInstance(MyApplication.getApplication()).getPrefString(ABLConfig.CAMERA_DIRECTION, "0");
     }
 }

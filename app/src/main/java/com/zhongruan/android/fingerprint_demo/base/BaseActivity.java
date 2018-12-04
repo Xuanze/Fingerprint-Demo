@@ -34,8 +34,6 @@ public abstract class BaseActivity extends FragmentActivity {
     private boolean isExit;
     private ProgressDialog progressDialog;
     private BaseReceiver baseReceiver;
-    public SoundPool soundPool;
-    //定义一个HashMap用于存放音频流的ID
     public HashMap<Integer, Integer> musicId = new HashMap<>();
 
     @Override
@@ -44,14 +42,6 @@ public abstract class BaseActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         baseReceiver = new BaseReceiver();
-        soundPool = new SoundPool(12, AudioManager.STREAM_MUSIC, 0);
-        //通过load方法加载指定音频流，并将返回的音频ID放入musicId中
-        musicId.put(1, soundPool.load(this, R.raw.beep, 1));
-        musicId.put(2, soundPool.load(this, R.raw.finger, 1));
-        musicId.put(3, soundPool.load(this, R.raw.idcard, 1));
-        musicId.put(4, soundPool.load(this, R.raw.identify_face, 1));
-        musicId.put(5, soundPool.load(this, R.raw.identify_face_failed, 1));
-        musicId.put(6, soundPool.load(this, R.raw.identify_succeeded, 1));
         setContentView();
         initViews();
         initListeners();

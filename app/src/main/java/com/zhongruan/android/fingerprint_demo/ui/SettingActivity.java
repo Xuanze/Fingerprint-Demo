@@ -127,7 +127,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             mTvFingerBdfw.setText("1 : N");
         }
         mTvBgd.setText(ConfigApplication.getApplication().getCameraExposure());
-        mTvSxt.setText(ConfigApplication.getApplication().getCameraDirectionStr());
+        mTvSxt.setText(ConfigApplication.getApplication().getCameraDirectionStr().equals("0") ? "正" : "反");
     }
 
     @Override
@@ -256,10 +256,15 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             case R.id.ll_sxt:
                 final String[] sxtArry = new String[]{"正", "反"};
                 builder = new AlertDialog.Builder(this);// 自定义对话框
-                builder.setSingleChoiceItems(sxtArry, ConfigApplication.getApplication().getCameraDirectionStr().equals("正") ? 0 : 1, new DialogInterface.OnClickListener() {// 2默认的选中
+                builder.setSingleChoiceItems(sxtArry, ConfigApplication.getApplication().getCameraDirectionStr().equals("0") ? 0 : 1, new DialogInterface.OnClickListener() {// 2默认的选中
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mTvSxt.setText(sxtArry[which]);
+                        if (which == 0) {
+                            ConfigApplication.getApplication().setCameraDirection("0");
+                        } else {
+                            ConfigApplication.getApplication().setCameraDirection("180");
+                        }
                         dialog.dismiss();//随便点击一个item消失对话框，不用点击确认取消
                     }
                 });

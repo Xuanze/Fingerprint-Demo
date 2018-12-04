@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,6 +30,7 @@ import com.zhongruan.android.fingerprint_demo.R;
 import com.zhongruan.android.fingerprint_demo.adapter.SelectKsAdapter;
 import com.zhongruan.android.fingerprint_demo.base.BaseActivity;
 import com.zhongruan.android.fingerprint_demo.camera.CameraInterface;
+import com.zhongruan.android.fingerprint_demo.camera.CameraInterface.CamOpenOverCallback;
 import com.zhongruan.android.fingerprint_demo.camera.CameraSurfaceView;
 import com.zhongruan.android.fingerprint_demo.camera.util.DisplayUtil;
 import com.zhongruan.android.fingerprint_demo.config.ABLConfig;
@@ -50,6 +52,7 @@ import com.zhongruan.android.fingerprint_demo.utils.FileUtils;
 import com.zhongruan.android.fingerprint_demo.utils.IDCard;
 import com.zhongruan.android.fingerprint_demo.utils.LogUtil;
 import com.zhongruan.android.fingerprint_demo.utils.MyTimeTask;
+import com.zhongruan.android.fingerprint_demo.utils.PlaySoundUtils;
 import com.zhongruan.android.fingerprint_demo.utils.Utils;
 
 import java.io.File;
@@ -64,7 +67,7 @@ import cn.com.aratek.facelib.FaceAuthListeners;
  * 身份认证
  * Created by Administrator on 2017/9/8.
  */
-public class RZActivity extends BaseActivity implements View.OnClickListener {
+public class RZActivity extends BaseActivity implements View.OnClickListener, CamOpenOverCallback {
     private LinearLayout llSwitch, llPhoto, mLlBack, mLlChangeCc, ll_kwdj, layout_view_finger, include_idcard, ll_inputIdCard, layout_view_face, layout_view_rz_face, state_camera, layout_view_kslist;
     private TextView mTvCountUnverified, mTvTitle, mTvCountVerified, mTvCountTotal, mTvTime, mTvDate, mTvTip, mTvKsName, mTvKsSeat, mKsResult, mTvKsSfzh, mTvKsKc, mTvKsno;
     private RelativeLayout rl_camera, layout_view_finger_faceverify;
@@ -92,7 +95,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     private ImageView mIvKs;
     private FingerData fingerData;
     private Bitmap zwBitmap;
-    private CameraSurfaceView surfaceView = null;
+    private SurfaceView surfaceView = null;
     private List<Rz_ks_zw> rz_ks_zw;
     private boolean isRzSucceed;
     private GridView gvKs;
@@ -112,6 +115,13 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     private AraFaceAuthLib araFaceAuthLib;
     private Runnable FingerThread, IDCardThread;
     private Handler handler;
+    private Thread initThread;
+    private boolean isRun = true;
+    private Runnable initCameraThread = new Runnable() {
+        public void run() {
+            CameraInterface.getInstance().doOpenCamera(RZActivity.this);
+        }
+    };
 
     public RZActivity() {
         handler = new Handler() {
@@ -122,9 +132,6 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                     case ABLConfig.RZ_TIME:
                         mTvTime.setText(DateUtil.getNowTimeNoDate());
                         mTvDate.setText(DateUtil.getDateByFormat("yyyy年MM月dd日"));
-                        break;
-                    case ABLConfig.RZ_VIEW:
-                        initViewParams();
                         break;
                     case ABLConfig.RZ_VISIBILITY:
                         state_camera.setVisibility(View.GONE);
@@ -151,7 +158,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                         @Override
                         public Object callback() {
                             CS++;
-                            soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
+                            PlaySoundUtils.playSoundWithState(101, 1, 1);
                             return MyApplication.getYltFingerEngine().fingerSearch(fingerData.getFingerFeatures());
                         }
                     }, new ABLSynCallback.ForegroundCall() {
@@ -186,7 +193,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                     ABLSynCallback.call(new ABLSynCallback.BackgroundCall() {
                         @Override
                         public Object callback() {
-                            soundPool.play(musicId.get(1), 1, 1, 0, 0, 1);
+                            PlaySoundUtils.playSoundWithState(101, 1, 1);
                             return DbServices.getInstance(getBaseContext()).selectBKKSs(ksKcList, ccno, idCardData.getSfzh());
                         }
                     }, new ABLSynCallback.ForegroundCall() {
@@ -280,6 +287,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         mTvTitle.setSelected(true);
         setTimer();
         initFace();
+        surfaceView = new CameraSurfaceView(RZActivity.this, surfaceView);
         MyApplication.getApplication().setShouldStopUploadingData(false);
         ccno = DbServices.getInstance(getBaseContext()).selectCC().get(0).getCc_no();
         ccmc = DbServices.getInstance(getBaseContext()).selectCC().get(0).getCc_name();
@@ -353,7 +361,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
                 handler.sendEmptyMessage(ABLConfig.RZ_CAMERA);
                 break;
             case R.id.llSwitch:
-                CameraInterface.getInstance().cameraSwitch(surfaceView);
+                CameraInterface.getInstance().cameraSwitch();
                 break;
             case R.id.ll_kwdj:
                 new HintDialog(this, R.style.dialog, "是进行考务登记？", new HintDialog.OnCloseListener() {
@@ -423,6 +431,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void xzMS() {
+        CameraInterface.getInstance().doStopCamera();
         zwid = "";
         ZpFileName = null;
         isRzSucceed = false;
@@ -448,7 +457,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             layout_view_kslist.setVisibility(View.GONE);
             include_idcard.setVisibility(View.VISIBLE);
             mTvTip.setText("请刷身份证");
-            soundPool.play(musicId.get(3), 1, 1, 0, 0, 1);
+            PlaySoundUtils.playSoundWithState(103, 1, 1);
             handler.post(IDCardThread);
         }
     }
@@ -472,7 +481,7 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             MyApplication.getYltFingerEngine().importfinger(bytes, rz_ks_zw.get(i).getKsid() + "");
         }
         mTvTip.setText("请按手指");
-        soundPool.play(musicId.get(2), 1, 1, 0, 0, 1);
+        PlaySoundUtils.playSoundWithState(102, 1, 1);
         handler.post(FingerThread);
     }
 
@@ -491,9 +500,9 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
             sfrz_rzjg = saveRzjg("22", rz_ks_zw.get(0).getKs_ksno(), kmno, kdno, rz_ks_zw.get(0).getKs_kcno(), rz_ks_zw.get(0).getKs_zwh(), Terminal.getSN(), "", "0");
         }
         mTvTip.setText("请拍照");
-        soundPool.play(musicId.get(4), 1, 1, 0, 0, 1);
-        handler.sendEmptyMessage(ABLConfig.RZ_VIEW);
-        handler.sendEmptyMessageDelayed(ABLConfig.RZ_VISIBILITY, 1000);
+        PlaySoundUtils.playSoundWithState(104, 1, 1);
+        initThread = new Thread(this.initCameraThread);
+        initThread.start();
     }
 
     /**
@@ -691,12 +700,9 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         araFaceAuthLib.setStatusListener(listener);
     }
 
-    private void initViewParams() {
-        ViewGroup.LayoutParams params = surfaceView.getLayoutParams();
-        Point p = DisplayUtil.getScreenMetrics(this);
-        params.width = p.x;
-        params.height = p.y;
-        surfaceView.setLayoutParams(params);
+    @Override
+    public void cameraHasOpened() {
+        handler.sendEmptyMessage(ABLConfig.RZ_VISIBILITY);
     }
 
     @Override
@@ -764,6 +770,9 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (initThread.isAlive()) {
+            initThread.interrupt();
+        }
         araFaceAuthLib.cleanListeners();
         araFaceAuthLib.releaseFaceEngine();
         timeTask.stop();
@@ -771,6 +780,5 @@ public class RZActivity extends BaseActivity implements View.OnClickListener {
         handler.removeCallbacks(IDCardThread);
         handler = null;
         fingerData = null;
-        CameraInterface.getInstance().doStopCamera();
     }
 }

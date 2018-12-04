@@ -85,6 +85,28 @@ public class CommonUtil {
         return str;
     }
 
+    public static Integer objToInt(Object paramObject) {
+        if (paramObject == null)
+            return Integer.valueOf(-1);
+        try {
+            Integer localInteger = Integer.valueOf(Integer.parseInt((paramObject + "").trim()));
+            return localInteger;
+        } catch (Exception localException) {
+        }
+        return Integer.valueOf(-1);
+    }
+
+    public static Integer objToInt(Object paramObject, int paramInt) {
+        if (paramObject == null)
+            return Integer.valueOf(paramInt);
+        try {
+            Integer localInteger = Integer.valueOf(Integer.parseInt((paramObject + "").trim()));
+            return localInteger;
+        } catch (Exception localException) {
+        }
+        return Integer.valueOf(paramInt);
+    }
+
     public static byte[] long2bytes(long in) {
         byte[] out = new byte[8];
         for (int i = 0; i < 8; i++) {
